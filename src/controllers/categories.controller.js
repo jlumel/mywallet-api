@@ -1,4 +1,5 @@
 import Categories from '../models/Categories.model.js'
+import Subcategories from '../models/Subcategories.model.js'
 import Transactions from '../models/Transactions.model.js'
 
 const categoriesController = {
@@ -8,7 +9,7 @@ const categoriesController = {
         const userId = req.session.user._id
 
         try {
-            const categories = await Categories.find(userId).exec()
+            const categories = await Categories.find({ userId }).exec()
             res.json(categories)
         } catch (err) {
             res.status(500).json({ error: 'Internal server error' })
@@ -65,11 +66,16 @@ const categoriesController = {
 
             if (name) {
                 const category = { name }
+                const oldCategory = await Categories.findeOne({ _id: id })
                 await Categories.findOneAndUpdate({ _id: id },
                     {
                         $set: { ...category }
                     }
                 )
+
+                await Transactions.updateMany({ userId: req.session.user._id, categoryName: oldCategory.name }, { categoryName: req.body.name })
+
+                await Subcategories.updateMany({ userId: req.session.user._id, categoryName: oldCategory.name }, { categoryName: req.body.name })
 
                 res.json({ message: "Subcategory updated successfully" })
             }

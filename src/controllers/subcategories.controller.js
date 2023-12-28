@@ -8,7 +8,7 @@ const subCategoriesController = {
         const userId = req.session.user._id
 
         try {
-            const subCategories = await SubCategories.find(userId).exec()
+            const subCategories = await SubCategories.find({ userId }).exec()
             res.json(subCategories)
         } catch (err) {
             res.status(500).json({ error: 'Internal server error' })
@@ -66,11 +66,14 @@ const subCategoriesController = {
 
             if (name) {
                 const subCategory = { name }
+                const oldSubcategory = await SubCategories.findOne({ _id: id })
                 await SubCategories.findOneAndUpdate({ _id: id },
                     {
                         $set: { ...subCategory }
                     }
                 )
+
+                await Transactions.updateMany({ userId: req.session.user._id, subCategoryName: oldSubcategory.name }, { subCategoryName: req.body.name })
 
                 res.json({ message: "Subcategory updated successfully" })
             }

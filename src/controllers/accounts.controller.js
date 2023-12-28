@@ -10,7 +10,7 @@ const accountsController = {
         const userId = req.session.user._id
 
         try {
-            const accounts = await Accounts.find(userId).exec()
+            const accounts = await Accounts.find({ userId })
             res.json(accounts)
         } catch (err) {
             res.status(500).json({ error: 'Internal server error' })
@@ -72,6 +72,8 @@ const accountsController = {
 
         try {
 
+            const oldAccount = await Accounts.findOne({ _id: id })
+
             const account = {}
 
             for (const key in req.body) {
@@ -82,6 +84,11 @@ const accountsController = {
                     $set: { ...account }
                 }
             )
+
+            if (req.body.name) {
+
+                await Transactions.updateMany({ userId: req.session.user._id, accountName: oldAccount.name }, { accountName: req.body.name })
+            }
 
             res.json({ message: "Account updated successfully" })
 

@@ -1,19 +1,19 @@
 import currenciesController from '../controllers/currencies.controller.js'
 
 const Currencies = router => {
-    router.get('/categories', (req, res) => {
+    router.get('/currencies', (req, res) => {
         currenciesController.getCurrencies(req, res)
     }),
-    router.get('/categories/:id', (req, res) => {
+    router.get('/currencies/:id', (req, res) => {
         currenciesController.getCurrencyById(req, res)
     }),
-    router.post('/categories', (req, res) => {
+    router.post('/currencies', (req, res) => {
         currenciesController.createCurrency(req, res)
     }),
-    router.put('/categories/:id', (req, res) => {
+    router.put('/currencies/:id', (req, res) => {
         currenciesController.modifyCurrency(req, res)
     }),
-    router.delete('/categories/:id', (req, res) => {
+    router.delete('/currencies/:id', (req, res) => {
         currenciesController.deleteCurrency(req, res)
     })
 }

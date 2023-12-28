@@ -1,4 +1,4 @@
-import Currencies from '../models/Currencies.model'
+import Currencies from '../models/Currencies.model.js'
 import Transactions from '../models/Transactions.model.js'
 
 const currenciesController = {
@@ -8,7 +8,7 @@ const currenciesController = {
         const userId = req.session.user._id
 
         try {
-            const currencies = await Currencies.find(userId).exec()
+            const currencies = await Currencies.find({ userId }).exec()
             res.json(currencies)
         } catch (err) {
             res.status(500).json({ error: 'Internal server error' })
@@ -64,6 +64,8 @@ const currenciesController = {
 
         try {
 
+            const oldCurrency = await Currencies.findOne({ _id: id })
+
             const currency = {}
 
             for (const key in req.body) {
@@ -74,6 +76,16 @@ const currenciesController = {
                     $set: { ...currency }
                 }
             )
+
+            if (req.body.name) {
+
+                await Transactions.updateMany({ userId: req.session.user._id, currencyName: oldCurrency.name }, { currencyName: req.body.name })
+            }
+
+            if (req.body.acronym) {
+
+                await Transactions.updateMany({ userId: req.session.user._id, currencyAcronym: oldCurrency.acronym }, { currencyAcronym: req.body.acronym })
+            }
 
             res.json({ message: "Currency updated successfully" })
 
