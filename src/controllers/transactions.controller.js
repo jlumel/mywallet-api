@@ -1,5 +1,5 @@
 import Transactions from "../models/Transactions.model.js"
-import Users from "../models/users.model.js"
+import Accounts from "../models/accounts.model.js"
 
 const transactionsController = {
 
@@ -67,21 +67,24 @@ const transactionsController = {
 
         const userId = req.session.user._id
 
-        // let balance
-
         const { type, currencyAcronym, amount, accountName, categoryName, subCategoryName, description } = req.body
 
         if (type && currencyAcronym && amount && !isNaN(Number(amount)) && amount > 0 && accountName && categoryName && subCategoryName) {
 
-            // try {
-            //     const user = await Users.findById(userId).exec()
-            //     balance = user.balance
-            // } catch (err) {
-            //     return res.status(500).json({ error: 'Internal server error' })
-            // }
-            // if (type == "debit" && amount > balance) {
-            //     return res.status(400).json({ message: "Not enough funds" })
-            // }
+            try {
+                const account = await Accounts.findOne({ name: accountName })
+
+                if (account.currencyAcronym != currencyAcronym) {
+                    return res.status(400).json({ message: "This account uses a different currency" })
+                }
+
+                if (type == "debit" && account.balance < amount) {
+                    return res.status(400).json({ message: "Insufficient funds" })
+                }
+            } catch (err) {
+                return res.status(400).json({ error: "The transaction could not be added" })
+            }
+
             const transaction = {
                 type,
                 userId,
@@ -99,12 +102,15 @@ const transactionsController = {
             newTransaction.save()
                 .then(async () => {
                     try {
+                        switch (type) {
+                            case 'debit':
+                                await Accounts.updateOne({ name: accountName }, { balance: balance - amount })
+                                break;
 
-                        // if (type == "debit") {
-                        //     await Users.findOneAndUpdate({ _id: userId, }, { balance: balance - amount })
-                        // } else {
-                        //     await Users.findOneAndUpdate({ _id: userId, }, { balance: balance + amount })
-                        // }
+                            case 'credit':
+                                await Accounts.updateOne({ name: accountName }, { balance: balance + amount })
+                                break;
+                        }
 
                         res.status(201).json({ message: "Transaction created successfully" })
 
@@ -122,22 +128,37 @@ const transactionsController = {
     },
     modifyTransaction: async (req, res) => {
 
-        // modify a given transaction information: get transaction id and information to modify
+        // modify a given transaction information: get transaction id and information to modify. Allow to modify only one key at a time.
 
         const { id } = req.params
 
+        const key = Object.keys(req.body)[0]
+        const value = Object.values(req.body)[0]
+
         try {
 
-            const transaction = {}
+            const transaction = await Transactions.findById(id)
 
-            for (const key in req.body) {
-                transaction[key] = req.body[key]
+            await Transactions.findOneAndUpdate({ _id: id }, { [key]: value })
+
+            switch (key) {
+
+                case "type":
+                    if (value == 'debit') {
+                        await Accounts.updateOne({ name: transaction.accountName }, { balance: balance - (transaction.amount * 2) })
+                    } else {
+                        await Accounts.updateOne({ name: transaction.accountName }, { balance: balance + (transaction.amount * 2) })
+                    }
+                    break;
+
+                case "amount":
+                    if (transaction.type == 'debit') {
+                        await Accounts.updateOne({ name: transaction.accountName }, { balance: balance + transaction.amount - value })
+                    } else {
+                        await Accounts.updateOne({ name: transaction.accountName }, { balance: balance - transaction.amount + value })
+                    }
+                    break;
             }
-            await Transactions.findOneAndUpdate({ _id: id },
-                {
-                    $set: { ...transaction }
-                }
-            )
 
             res.json({ message: "Transaction updated successfully" })
 
@@ -154,7 +175,20 @@ const transactionsController = {
         const { id } = req.params
 
         try {
+
+            const transaction = await Transactions.findOne({ _id: id })
             await Transactions.deleteOne({ _id: id })
+
+            switch (transaction.type) {
+
+                case 'debit':
+                    await Accounts.updateOne({ name: transaction.accountName }, { balance: balance - transaction.amount })
+                    break;
+
+                case 'credit':
+                    await Accounts.updateOne({ name: transaction.accountName }, { balance: balance + transaction.amount })
+                    break;
+            }
 
             res.json({ message: "Transaction deleted successfully" })
 
