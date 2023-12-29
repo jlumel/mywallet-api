@@ -18,6 +18,10 @@ const Users = (app, router) => {
     router.post('/user', (req, res) => {
         usersController.isLogged(req, res)
     })
+
+    router.put('/user/password', (req, res) => {
+        usersController.changePassword(req, res)
+    })
 }
 
 export default Users

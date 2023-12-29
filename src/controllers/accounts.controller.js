@@ -7,7 +7,7 @@ const accountsController = {
 
         // get all accounts from a user
 
-        const userId = req.session.user._id
+        const userId = req.user._doc._id
 
         try {
             const accounts = await Accounts.find({ userId })
@@ -21,7 +21,7 @@ const accountsController = {
 
         // get an account by id
 
-        const userId = req.session.user._id
+        const userId = req.user._doc._id
         const { id } = req.params
 
         try {
@@ -36,7 +36,7 @@ const accountsController = {
 
         // create a new account
 
-        const userId = req.session.user._id
+        const userId = req.user._doc._id
 
         const { name, currencyAcronym } = req.body
 
@@ -87,7 +87,7 @@ const accountsController = {
 
             if (req.body.name) {
 
-                await Transactions.updateMany({ userId: req.session.user._id, accountName: oldAccount.name }, { accountName: req.body.name })
+                await Transactions.updateMany({ userId: req.user._doc._id, accountName: oldAccount.name }, { accountName: req.body.name })
             }
 
             res.json({ message: "Account updated successfully" })
@@ -121,16 +121,6 @@ const accountsController = {
 
         } catch (err) {
             return res.status(500).json({ error: 'Internal server error' })
-        }
-    },
-    isLogged: (req, res) => {
-
-        if (req.session && req.session.user) {
-            console.log(req.session)
-            res.json({ isLogged: true, username: req.session.user.username })
-        } else {
-            console.log(req.session)
-            res.json({ isLogged: false, username: "" })
         }
     }
 

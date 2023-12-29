@@ -1,4 +1,4 @@
-import usersModel from '../models/users.model.js'
+import Users from '../models/users.model.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { logger } from '../service/logger.service.js'
@@ -15,7 +15,7 @@ const userController = {
 
         const { username, password, password2 } = req.body
         try {
-            const user = await usersModel.findOne({ username: username }).exec()
+            const user = await Users.findOne({ username: username }).exec()
 
             if (user) {
                 res.status(400).json({ error: 'User already exists' })
@@ -25,7 +25,7 @@ const userController = {
                 }
                 const token = jwt.sign(req.body, process.env.JWT_SECRET, { expiresIn: `${Number(process.env.SESSION_TTL) / 1000}` })
                 const hash = createHash(password)
-                const newUser = new usersModel({ username: username, password: hash })
+                const newUser = new Users({ username: username, password: hash })
 
                 newUser.save()
                     .then(() => res.json({ token }))
@@ -46,7 +46,7 @@ const userController = {
 
         let { username, password } = req.body
         try {
-            const user = await usersModel.findOne({ username: username }).exec()
+            const user = await Users.findOne({ username: username }).exec()
 
             if (!user) {
                 res.status(400).json({ error: 'User does not exist' })
@@ -82,6 +82,23 @@ const userController = {
             res.json({ isLogged: true, username: req.user._doc.username })
         } else {
             res.json({ isLogged: false, username: "" })
+        }
+    },
+    changePassword: async (req, res) => {
+
+        const userId = req.user._doc._id
+
+        const newPassword = req.body.newPassword
+
+        try {
+
+            await Users.findOneAndUpdate({ _id: userId },{password: createHash(newPassword)}
+            )
+
+            res.json({ message: "Password updated successfully" })
+
+        } catch (err) {
+            return res.status(500).json({ error: 'Internal server error' })
         }
     }
 }
