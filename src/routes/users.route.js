@@ -17,7 +17,6 @@ const Users = (app, router) => {
 
     router.post('/user', (req, res) => {
         usersController.isLogged(req, res)
-        
     })
 }
 

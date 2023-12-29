@@ -78,9 +78,8 @@ const userController = {
     },
     isLogged: (req, res) => {
 
-        if (req.session && req.session.user) {
-            console.log(req.session)
-            res.json({ isLogged: true, username: req.session.user.username })
+        if (req.user && req.user._doc.username) {
+            res.json({ isLogged: true, username: req.user._doc.username })
         } else {
             res.json({ isLogged: false, username: "" })
         }
