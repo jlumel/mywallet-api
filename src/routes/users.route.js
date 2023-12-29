@@ -1,7 +1,7 @@
 import usersController from '../controllers/users.controller.js'
 
 
-const Users = app => {
+const Users = (app, router) => {
 
     app.post('/user/register', (req, res) => {
         usersController.registerUser(req, res)
@@ -13,6 +13,11 @@ const Users = app => {
 
     app.post('/user/logout', (req, res) => {
         usersController.logoutUser(req, res)
+    })
+
+    router.post('/user', (req, res) => {
+        usersController.isLogged(req, res)
+        
     })
 }
 

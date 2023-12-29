@@ -3,9 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { logger } from '../service/logger.service.js'
 
-const saltRounds = 10
-
-const createHash = (password, saltRounds) => bcrypt.hashSync(password, saltRounds)
+const createHash = password => bcrypt.hashSync(password, 10)
 
 const validatePassword = (user, password) => bcrypt.compareSync(password, user.password)
 
@@ -26,7 +24,7 @@ const userController = {
                     return res.status(400).json({ error: 'Passwords do not match' })
                 }
                 const token = jwt.sign(req.body, process.env.JWT_SECRET, { expiresIn: `${Number(process.env.SESSION_TTL) / 1000}` })
-                const hash = createHash(password, saltRounds)
+                const hash = createHash(password)
                 const newUser = new usersModel({ username: username, password: hash })
 
                 newUser.save()
@@ -56,7 +54,7 @@ const userController = {
                 if (!validatePassword(user, password)) {
                     res.status(403).json({ error: 'Invalid password' })
                 } else {
-                    const token = jwt.sign({ password: createHash(password, saltRounds), ...user }, process.env.JWT_SECRET, { expiresIn: process.env.SESSION_TTL })
+                    const token = jwt.sign({ password: createHash(password), ...user }, process.env.JWT_SECRET, { expiresIn: process.env.SESSION_TTL })
                     req.session.user = user
                     logger.info(`${username} signed in`)
                     res.json({ token, username })
@@ -76,7 +74,16 @@ const userController = {
             }
             logger.info("Logged out")
         })
-        res.json({message: "Logged out successfully"})
+        res.json({ message: "Logged out successfully" })
+    },
+    isLogged: (req, res) => {
+
+        if (req.session && req.session.user) {
+            console.log(req.session)
+            res.json({ isLogged: true, username: req.session.user.username })
+        } else {
+            res.json({ isLogged: false, username: "" })
+        }
     }
 }
 

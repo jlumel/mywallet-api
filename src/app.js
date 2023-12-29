@@ -29,7 +29,7 @@ initApp(app)
 
 // Routes
 
-Users(app)
+Users(app, router)
 Transactions(router)
 Accounts(router)
 Currencies(router)
