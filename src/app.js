@@ -10,12 +10,14 @@ import Accounts from './routes/accounts.route.js'
 import Currencies from './routes/currencies.route.js'
 import Categories from './routes/categories.route.js'
 import SubCategories from './routes/subcategories.route.js'
+import cors from 'cors'
 
 const app = express()
 const router = express.Router()
 
 //Middlewares
 
+app.use(cors())
 app.use(compression())
 app.use(express.json())
 app.use(cookieParser())

@@ -59,7 +59,7 @@ const userController = {
                     const token = jwt.sign({ password: createHash(password, saltRounds), ...user }, process.env.JWT_SECRET, { expiresIn: process.env.SESSION_TTL })
                     req.session.user = user
                     logger.info(`${username} signed in`)
-                    res.json({ token })
+                    res.json({ token, username })
                 }
             }
         } catch (err) {
@@ -76,7 +76,7 @@ const userController = {
             }
             logger.info("Logged out")
         })
-        res.redirect('/')
+        res.json({message: "Logged out successfully"})
     }
 }
 

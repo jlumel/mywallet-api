@@ -11,7 +11,7 @@ const Users = app => {
         usersController.loginUser(req, res)
     })
 
-    app.get('/user/logout', (req, res) => {
+    app.post('/user/logout', (req, res) => {
         usersController.logoutUser(req, res)
     })
 }
