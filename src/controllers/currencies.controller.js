@@ -5,7 +5,7 @@ const currenciesController = {
 
     getCurrencies: async (req, res) => {
 
-        const userId = req.user._doc._id
+        const userId = req.session.user._id
 
         try {
             const currencies = await Currencies.find({ userId }).exec()
@@ -17,7 +17,7 @@ const currenciesController = {
     },
     getCurrencyById: async (req, res) => {
 
-        const userId = req.user._doc._id
+        const userId = req.session.user._id
         const { id } = req.params
 
         try {
@@ -30,7 +30,7 @@ const currenciesController = {
     },
     createCurrency: (req, res) => {
 
-        const userId = req.user._doc._id
+        const userId = req.session.user._id
 
         const { name, acronym, symbol } = req.body
 
@@ -79,12 +79,12 @@ const currenciesController = {
 
             if (req.body.name) {
 
-                await Transactions.updateMany({ userId: req.user._doc._id, currencyName: oldCurrency.name }, { currencyName: req.body.name })
+                await Transactions.updateMany({ userId: req.session.user._id, currencyName: oldCurrency.name }, { currencyName: req.body.name })
             }
 
             if (req.body.acronym) {
 
-                await Transactions.updateMany({ userId: req.user._doc._id, currencyAcronym: oldCurrency.acronym }, { currencyAcronym: req.body.acronym })
+                await Transactions.updateMany({ userId: req.session.user._id, currencyAcronym: oldCurrency.acronym }, { currencyAcronym: req.body.acronym })
             }
 
             res.json({ message: "Currency updated successfully" })

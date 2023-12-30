@@ -23,7 +23,7 @@ const userController = {
                 if (password !== password2) {
                     return res.status(400).json({ error: 'Passwords do not match' })
                 }
-                const token = jwt.sign(req.body, process.env.JWT_SECRET, { expiresIn: `${Number(process.env.SESSION_TTL) / 1000}` })
+                const token = jwt.sign(req.body, process.env.JWT_SECRET, { expiresIn: `${Number(process.env.SESSION_TTL)}` })
                 const hash = createHash(password)
                 const newUser = new Users({ username: username, password: hash })
 
@@ -67,25 +67,32 @@ const userController = {
 
         // Log out and end session
 
+        req.session.destroy(function (err) {
+            if (err) {
+                res.status(500).json({ error: "Internal server error" })
+            }
+            logger.info("Logged out")
+        })
+
         res.json({ message: "Logged out successfully" })
     },
     isLogged: (req, res) => {
 
-        if (req.user && req.user._doc.username) {
-            res.json({ isLogged: true, username: req.user._doc.username })
+        if (req.user && req.user.username) {
+            res.json({ isLogged: true, username: req.user.username })
         } else {
             res.json({ isLogged: false, username: "" })
         }
     },
     changePassword: async (req, res) => {
 
-        const userId = req.user._doc._id
+        const userId = req.session.user._id
 
         const newPassword = req.body.newPassword
 
         try {
 
-            await Users.findOneAndUpdate({ _id: userId }, {password: createHash(newPassword)}
+            await Users.findOneAndUpdate({ _id: userId }, { password: createHash(newPassword) }
             )
 
             res.json({ message: "Password updated successfully" })

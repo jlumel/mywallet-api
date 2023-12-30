@@ -5,7 +5,7 @@ const subCategoriesController = {
 
     getSubCategories: async (req, res) => {
 
-        const userId = req.user._doc._id
+        const userId = req.session.user._id
 
         try {
             const subCategories = await SubCategories.find({ userId }).exec()
@@ -17,7 +17,7 @@ const subCategoriesController = {
     },
     getSubCategoryById: async (req, res) => {
 
-        const userId = req.user._doc._id
+        const userId = req.session.user._id
         const { id } = req.params
 
         try {
@@ -31,7 +31,7 @@ const subCategoriesController = {
     },
     createSubCategory: (req, res) => {
 
-        const userId = req.user._doc._id
+        const userId = req.session.user._id
 
         const { name } = req.body
 
@@ -73,7 +73,7 @@ const subCategoriesController = {
                     }
                 )
 
-                await Transactions.updateMany({ userId: req.user._doc._id, subCategoryName: oldSubcategory.name }, { subCategoryName: req.body.name })
+                await Transactions.updateMany({ userId: req.session.user._id, subCategoryName: oldSubcategory.name }, { subCategoryName: req.body.name })
 
                 res.json({ message: "Subcategory updated successfully" })
             }

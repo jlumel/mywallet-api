@@ -11,7 +11,7 @@ const Users = (app, router) => {
         usersController.loginUser(req, res)
     })
 
-    app.post('/user/logout', (req, res) => {
+    router.post('/user/logout', (req, res) => {
         usersController.logoutUser(req, res)
     })
 
