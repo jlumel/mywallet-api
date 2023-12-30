@@ -2,7 +2,6 @@ import express from 'express'
 import compression from 'compression'
 import cookieParser from 'cookie-parser'
 import initApp from './service/initApp.service.js'
-import initSession from './middleware/initSession.js'
 import Users from './routes/users.route.js'
 import verifyToken from './middleware/verifyToken.js'
 import Transactions from './routes/transactions.route.js'
@@ -21,7 +20,6 @@ app.use(cors())
 app.use(compression())
 app.use(express.json())
 app.use(cookieParser())
-initSession(app)
 app.use('/api', router)
 router.use(verifyToken)
 

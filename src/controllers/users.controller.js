@@ -55,7 +55,6 @@ const userController = {
                     res.status(403).json({ error: 'Invalid password' })
                 } else {
                     const token = jwt.sign({ password: createHash(password), ...user }, process.env.JWT_SECRET, { expiresIn: process.env.SESSION_TTL })
-                    req.session.user = user
                     logger.info(`${username} signed in`)
                     res.json({ token, username })
                 }
@@ -68,12 +67,6 @@ const userController = {
 
         // Log out and end session
 
-        req.session.destroy(function (err) {
-            if (err) {
-                res.status(500).json({ error: "Internal server error" })
-            }
-            logger.info("Logged out")
-        })
         res.json({ message: "Logged out successfully" })
     },
     isLogged: (req, res) => {
@@ -92,7 +85,7 @@ const userController = {
 
         try {
 
-            await Users.findOneAndUpdate({ _id: userId },{password: createHash(newPassword)}
+            await Users.findOneAndUpdate({ _id: userId }, {password: createHash(newPassword)}
             )
 
             res.json({ message: "Password updated successfully" })
