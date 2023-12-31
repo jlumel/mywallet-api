@@ -37,12 +37,12 @@ const subCategoriesController = {
 
         if (name) {
 
-            const category = {
+            const subCategory = {
                 name,
                 userId,
             }
 
-            const newSubCategory = new SubCategories(category)
+            const newSubCategory = new SubCategories(subCategory)
 
             newSubCategory.save()
                 .then(async () => {
