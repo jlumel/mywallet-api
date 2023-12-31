@@ -3,7 +3,7 @@ import compression from 'compression'
 import cookieParser from 'cookie-parser'
 import initApp from './service/initApp.service.js'
 import Users from './routes/users.route.js'
-import verifyToken from './middleware/verifyToken.js'
+import requireAuth from './middleware/requireAuth.js'
 import Transactions from './routes/transactions.route.js'
 import Accounts from './routes/accounts.route.js'
 import Currencies from './routes/currencies.route.js'
@@ -17,13 +17,13 @@ const router = express.Router()
 
 //Middlewares
 
-app.use(cors())
+app.use(cors({credentials: true, origin: 'http://localhost:5173'}))
 app.use(compression())
 app.use(express.json())
 app.use(cookieParser())
 initSession(app)
 app.use('/api', router)
-router.use(verifyToken)
+router.use(requireAuth)
 
 initApp(app)
 

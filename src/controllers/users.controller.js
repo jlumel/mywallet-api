@@ -1,11 +1,10 @@
 import Users from '../models/users.model.js'
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
 import { logger } from '../service/logger.service.js'
 
 const createHash = password => bcrypt.hashSync(password, 10)
 
-const validatePassword = (user, password) => bcrypt.compareSync(password, user.password)
+const validatePassword = (dbPassword, password) => bcrypt.compareSync(password, dbPassword)
 
 const userController = {
 
@@ -23,12 +22,11 @@ const userController = {
                 if (password !== password2) {
                     return res.status(400).json({ error: 'Passwords do not match' })
                 }
-                const token = jwt.sign(req.body, process.env.JWT_SECRET, { expiresIn: `${Number(process.env.SESSION_TTL)}` })
                 const hash = createHash(password)
                 const newUser = new Users({ username: username, password: hash })
 
                 newUser.save()
-                    .then(() => res.json({ token }))
+                    .then(() => res.json({ message: "User registered correctly" }))
                     .catch(err => {
                         res.status(500).json({ error: "Internal server error" })
                     })
@@ -51,12 +49,12 @@ const userController = {
             if (!user) {
                 res.status(400).json({ error: 'User does not exist' })
             } else {
-                if (!validatePassword(user, password)) {
+                if (!validatePassword(user.password, password)) {
                     res.status(403).json({ error: 'Invalid password' })
                 } else {
-                    const token = jwt.sign({ password: createHash(password), ...user }, process.env.JWT_SECRET, { expiresIn: process.env.SESSION_TTL })
+                    req.session.user = user
                     logger.info(`${username} signed in`)
-                    res.json({ token, username })
+                    res.json({ isLogged: true, username })
                 }
             }
         } catch (err) {
@@ -70,16 +68,17 @@ const userController = {
         req.session.destroy(function (err) {
             if (err) {
                 res.status(500).json({ error: "Internal server error" })
+            } else {
+                res.json({ message: "Logged out successfully" })
             }
-            logger.info("Logged out")
         })
+        logger.info("Logged out")
 
-        res.json({ message: "Logged out successfully" })
     },
-    isLogged: (req, res) => {
+    getSessionInfo: (req, res) => {
 
-        if (req.user && req.user.username) {
-            res.json({ isLogged: true, username: req.user.username })
+        if (req.session.user && req.session.user.username) {
+            res.json({ isLogged: true, username: req.session.user.username })
         } else {
             res.json({ isLogged: false, username: "" })
         }
@@ -92,8 +91,7 @@ const userController = {
 
         try {
 
-            await Users.findOneAndUpdate({ _id: userId }, { password: createHash(newPassword) }
-            )
+            await Users.findOneAndUpdate({ _id: userId }, { password: createHash(newPassword) })
 
             res.json({ message: "Password updated successfully" })
 

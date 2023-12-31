@@ -7,7 +7,7 @@ const initSession = app => {
         store: MongoStore.create({
             mongoUrl: process.env.MONGO_URL,
         }),
-        secret: process.env.JWT_SECRET,
+        secret: process.env.SECRET_KEY,
         cookie: { maxAge: Number(process.env.SESSION_TTL) },
         resave: false,
         saveUninitialized: false
