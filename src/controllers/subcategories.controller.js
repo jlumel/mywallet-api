@@ -1,5 +1,6 @@
-import SubCategories from '../models/Subcategories.model.js'
+import Subcategories from '../models/Subcategories.model.js'
 import Transactions from '../models/Transactions.model.js'
+import { Logger } from 'log4js'
 
 const subCategoriesController = {
 
@@ -8,8 +9,8 @@ const subCategoriesController = {
         const userId = req.session.user._id
 
         try {
-            const subCategories = await SubCategories.find({ userId }).exec()
-            res.json(subCategories)
+            const subcategories = await Subcategories.find({ userId }).exec()
+            res.json(subcategories)
         } catch (err) {
             res.status(500).json({ error: 'Internal server error' })
         }
@@ -21,7 +22,7 @@ const subCategoriesController = {
         const { id } = req.params
 
         try {
-            const subCategory = await SubCategories.find({ userId, _id: id }).exec()
+            const subCategory = await Subcategories.find({ userId, _id: id }).exec()
             res.json(subCategory)
         } catch (err) {
             res.status(500).json({ error: 'Internal server error' })
@@ -42,10 +43,10 @@ const subCategoriesController = {
                 userId,
             }
 
-            const newSubCategory = new SubCategories(subCategory)
+            const newSubCategory = new Subcategories(subCategory)
 
             newSubCategory.save()
-                .then(async () => {
+                .then(() => {
 
                     res.status(201).json({ message: "Subcategory created successfully" })
                 })
@@ -60,23 +61,33 @@ const subCategoriesController = {
     modifySubCategory: async (req, res) => {
 
         const { id } = req.params
-        const { name } = req.body.name
 
         try {
-
-            if (name) {
-                const subCategory = { name }
-                const oldSubcategory = await SubCategories.findOne({ _id: id })
-                await SubCategories.findOneAndUpdate({ _id: id },
-                    {
-                        $set: { ...subCategory }
-                    }
-                )
-
-                await Transactions.updateMany({ userId: req.session.user._id, subCategoryName: oldSubcategory.name }, { subCategoryName: req.body.name })
-
-                res.json({ message: "Subcategory updated successfully" })
+            const subCategory = {}
+            for (const key in req.body) {
+                subCategory[key] = req.body[key]
             }
+
+            const oldSubcategory = await Subcategories.findOne({ _id: id })
+            await Subcategories.findOneAndUpdate({ _id: id },
+                {
+                    $set: { ...subCategory }
+                }
+            )
+            try {
+                if (req.body.name) {
+                    await Transactions.updateMany({ userId: req.session.user._id, name: oldSubcategory.name }, { name: req.body.name })
+                }
+                if (req.body.categoryName) {
+                    await Transactions.updateMany({ userId: req.session.user._id, categoryName: oldSubcategory.categoryName }, { categoryName: req.body.categoryName })
+                }
+            } catch (err) {
+                logger.info("No related transactions")
+            }
+           
+
+
+            res.json({ message: "Subcategory updated successfully" })
 
         } catch (err) {
             return res.status(500).json({ error: 'Internal server error' })
@@ -95,7 +106,7 @@ const subCategoriesController = {
             }
 
             try {
-                await SubCategories.deleteOne({ _id: id })
+                await Subcategories.deleteOne({ _id: id })
 
                 res.json({ message: "Subcategory deleted successfully" })
 
