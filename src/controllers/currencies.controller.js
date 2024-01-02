@@ -69,7 +69,9 @@ const currenciesController = {
             const currency = {}
 
             for (const key in req.body) {
-                currency[key] = req.body[key]
+                if (req.body[key]) {
+                    currency[key] = req.body[key]
+                }
             }
             await Currencies.findOneAndUpdate({ _id: id },
                 {

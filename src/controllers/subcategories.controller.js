@@ -2,9 +2,9 @@ import Subcategories from '../models/Subcategories.model.js'
 import Transactions from '../models/Transactions.model.js'
 import { logger } from '../service/logger.service.js'
 
-const subCategoriesController = {
+const subcategoriesController = {
 
-    getSubCategories: async (req, res) => {
+    getSubcategories: async (req, res) => {
 
         const userId = req.session.user._id
 
@@ -16,36 +16,37 @@ const subCategoriesController = {
         }
 
     },
-    getSubCategoryById: async (req, res) => {
+    getSubcategoryById: async (req, res) => {
 
         const userId = req.session.user._id
         const { id } = req.params
 
         try {
-            const subCategory = await Subcategories.find({ userId, _id: id }).exec()
-            res.json(subCategory)
+            const subcategory = await Subcategories.find({ userId, _id: id }).exec()
+            res.json(subcategory)
         } catch (err) {
             res.status(500).json({ error: 'Internal server error' })
         }
 
 
     },
-    createSubCategory: (req, res) => {
+    createSubcategory: (req, res) => {
 
         const userId = req.session.user._id
 
-        const { name } = req.body
+        const { name, categoryName } = req.body
 
-        if (name) {
+        if (name && categoryName) {
 
-            const subCategory = {
+            const subcategory = {
                 name,
+                categoryName,
                 userId,
             }
 
-            const newSubCategory = new Subcategories(subCategory)
+            const newSubcategory = new Subcategories(subcategory)
 
-            newSubCategory.save()
+            newSubcategory.save()
                 .then(() => {
 
                     res.status(201).json({ message: "Subcategory created successfully" })
@@ -56,22 +57,23 @@ const subCategoriesController = {
         } else {
             return res.status(400).json({ message: "Information is missing" })
         }
-
     },
-    modifySubCategory: async (req, res) => {
+    modifySubcategory: async (req, res) => {
 
         const { id } = req.params
 
         try {
-            const subCategory = {}
+            const subcategory = {}
             for (const key in req.body) {
-                subCategory[key] = req.body[key]
+                if (req.body[key]) {
+                    subcategory[key] = req.body[key]
+                }
             }
 
             const oldSubcategory = await Subcategories.findOne({ _id: id })
             await Subcategories.findOneAndUpdate({ _id: id },
                 {
-                    $set: { ...subCategory }
+                    $set: { ...subcategory }
                 }
             )
             try {
@@ -94,13 +96,13 @@ const subCategoriesController = {
         }
 
     },
-    deleteSubCategory: async (req, res) => {
+    deleteSubcategory: async (req, res) => {
 
         const { id } = req.params
         const { name } = req.body
 
         try {
-            const count = await Transactions.countDocuments({ subCategoryName: name })
+            const count = await Transactions.countDocuments({ subcategoryName: name })
             if (count) {
                 return res.status(400).json({ message: "The subcategory has related transactions. Delete them first to delete the subcategory" })
             }
@@ -121,4 +123,4 @@ const subCategoriesController = {
     }
 }
 
-export default subCategoriesController
+export default subcategoriesController

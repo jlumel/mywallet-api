@@ -77,7 +77,9 @@ const accountsController = {
             const account = {}
 
             for (const key in req.body) {
-                account[key] = req.body[key]
+                if (req.body[key]) {
+                    account[key] = req.body[key]
+                }
             }
             await Accounts.findOneAndUpdate({ _id: id },
                 {

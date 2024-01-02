@@ -1,21 +1,21 @@
-import subCategoriesController from '../controllers/subcategories.controller.js'
+import subcategoriesController from '../controllers/subcategories.controller.js'
 
-const SubCategories = router => {
+const Subcategories = router => {
     router.get('/subcategories', (req, res) => {
-        subCategoriesController.getSubCategories(req, res)
+        subcategoriesController.getSubcategories(req, res)
     }),
     router.get('/subcategories/:id', (req, res) => {
-        subCategoriesController.getSubCategoryById(req, res)
+        subcategoriesController.getSubcategoryById(req, res)
     }),
     router.post('/subcategories', (req, res) => {
-        subCategoriesController.createSubCategory(req, res)
+        subcategoriesController.createSubcategory(req, res)
     }),
     router.put('/subcategories/:id', (req, res) => {
-        subCategoriesController.modifySubCategory(req, res)
+        subcategoriesController.modifySubcategory(req, res)
     }),
     router.delete('/subcategories/:id', (req, res) => {
-        subCategoriesController.deleteSubCategory(req, res)
+        subcategoriesController.deleteSubcategory(req, res)
     })
 }
 
-export default SubCategories
+export default Subcategories
