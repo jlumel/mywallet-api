@@ -1,6 +1,6 @@
 import Subcategories from '../models/Subcategories.model.js'
 import Transactions from '../models/Transactions.model.js'
-import { Logger } from 'log4js'
+import { logger } from '../service/logger.service.js'
 
 const subCategoriesController = {
 
@@ -84,7 +84,7 @@ const subCategoriesController = {
             } catch (err) {
                 logger.info("No related transactions")
             }
-           
+
 
 
             res.json({ message: "Subcategory updated successfully" })
