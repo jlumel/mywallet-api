@@ -1,4 +1,4 @@
-import Accounts from '../models/accounts.model.js'
+import Accounts from '../models/Accounts.model.js'
 import Transactions from '../models/Transactions.model.js'
 
 const accountsController = {
@@ -104,7 +104,7 @@ const accountsController = {
         // delete an account by id. Get the name to check if it has related transactions
 
         const { id } = req.params
-        const { name } = req.body
+        const { name } = req.query
 
         try {
             const count = await Transactions.countDocuments({ accountName: name })

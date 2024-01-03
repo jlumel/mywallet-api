@@ -1,5 +1,5 @@
 import Transactions from "../models/Transactions.model.js"
-import Accounts from "../models/accounts.model.js"
+import Accounts from "../models/Accounts.model.js"
 
 const transactionsController = {
 

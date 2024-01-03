@@ -1,5 +1,6 @@
 import Currencies from '../models/Currencies.model.js'
 import Transactions from '../models/Transactions.model.js'
+import Accounts from '../models/Accounts.model.js'
 
 const currenciesController = {
 
@@ -87,6 +88,8 @@ const currenciesController = {
             if (req.body.acronym) {
 
                 await Transactions.updateMany({ userId: req.session.user._id, currencyAcronym: oldCurrency.acronym }, { currencyAcronym: req.body.acronym })
+
+                await Accounts.updateMany({ userId: req.session.user._id, currencyAcronym: oldCurrency.acronym }, { currencyAcronym: req.body.acronym })
             }
 
             res.json({ message: "Currency updated successfully" })
@@ -99,12 +102,17 @@ const currenciesController = {
     deleteCurrency: async (req, res) => {
 
         const { id } = req.params
-        const { acronym } = req.body
+        const { acronym } = req.query
 
         try {
-            const count = await Transactions.countDocuments({ currencyAcronym: acronym })
-            if (count) {
+            const countTransactions = await Transactions.countDocuments({ currencyAcronym: acronym })
+            if (countTransactions) {
                 return res.status(400).json({ message: "The currency has related transactions. Delete them first to delete the currency" })
+            }
+
+            const countAccounts = await Accounts.countDocuments({ currencyAcronym: acronym })
+            if (countAccounts) {
+                return res.status(400).json({ message: "The currency has related accounts. Delete them first to delete the currency" })
             }
 
             try {
