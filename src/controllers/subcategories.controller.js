@@ -99,7 +99,7 @@ const subcategoriesController = {
     deleteSubcategory: async (req, res) => {
 
         const { id } = req.params
-        const { name } = req.body
+        const { name } = req.query
 
         try {
             const count = await Transactions.countDocuments({ subcategoryName: name })

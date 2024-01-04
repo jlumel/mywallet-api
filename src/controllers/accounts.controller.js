@@ -32,6 +32,31 @@ const accountsController = {
         }
 
     },
+    getTotalsByCurrency: async (req, res) => {
+
+        const userId = req.session.user._id
+
+        try {
+
+            const totals = await Accounts.aggregate([
+                {
+                    $match: { userId: userId },
+                },
+                {
+                    $group: {
+                        _id: '$currencyAcronym',
+                        count: { $sum: '$balance' },
+                    },
+                }
+            ])
+
+            res.json(totals)
+
+        } catch (err) {
+            res.status(500).json({ error: "Internal server error" })
+        }
+
+    },
     createAccount: (req, res) => {
 
         // create a new account

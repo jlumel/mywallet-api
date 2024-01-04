@@ -67,9 +67,9 @@ const transactionsController = {
 
         const userId = req.session.user._id
 
-        const { type, currencyAcronym, amount, accountName, categoryName, subCategoryName, description } = req.body
+        const { type, currencyAcronym, amount, accountName, categoryName, subcategoryName, description } = req.body
 
-        if (type && currencyAcronym && amount && !isNaN(Number(amount)) && amount > 0 && accountName && categoryName && subCategoryName) {
+        if (type && currencyAcronym && amount && !isNaN(Number(amount)) && amount > 0 && accountName && categoryName) {
 
             try {
                 const account = await Accounts.findOne({ name: accountName })
@@ -92,8 +92,8 @@ const transactionsController = {
                 amount,
                 accountName,
                 categoryName,
-                subCategoryName,
-                description,
+                subcategoryName: subcategoryName ? subcategoryName : "",
+                description: description ? description : "",
                 timestamp: Date.now()
             }
 

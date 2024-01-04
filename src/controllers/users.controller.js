@@ -17,10 +17,10 @@ const userController = {
             const user = await Users.findOne({ username: username }).exec()
 
             if (user) {
-                res.status(400).json({ error: 'User already exists' })
+                res.status(400).json({ message: 'User already exists' })
             } else if (username && password && password2) {
                 if (password !== password2) {
-                    return res.status(400).json({ error: 'Passwords do not match' })
+                    return res.status(400).json({ message: 'Passwords do not match' })
                 }
                 const hash = createHash(password)
                 const newUser = new Users({ username: username, password: hash })
@@ -47,13 +47,13 @@ const userController = {
             const user = await Users.findOne({ username: username }).exec()
 
             if (!user) {
-                res.status(400).json({ error: 'User does not exist' })
+                res.status(400).json({ message: 'User does not exist' })
             } else {
                 if (!validatePassword(user.password, password)) {
-                    res.status(403).json({ error: 'Invalid password' })
+                    res.status(403).json({ message: 'Invalid password' })
                 } else {
                     req.session.user = user
-                    logger.info(`${username} signed in`)
+                    logger.info("Signed in")
                     res.json({ isLogged: true, username })
                 }
             }

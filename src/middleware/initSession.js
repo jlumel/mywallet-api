@@ -8,7 +8,7 @@ const initSession = app => {
             mongoUrl: process.env.MONGO_URL,
         }),
         secret: process.env.SECRET_KEY,
-        cookie: { maxAge: Number(process.env.SESSION_TTL) },
+        cookie: { maxAge: Number(process.env.SESSION_TTL) * 4 },
         resave: false,
         saveUninitialized: false
     }))

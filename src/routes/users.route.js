@@ -7,7 +7,7 @@ const Users = (app, router) => {
         usersController.registerUser(req, res)
     })
 
-    app.post('/user/login', (req, res) => {
+    router.post('/user/login', (req, res) => {
         usersController.loginUser(req, res)
     })
 
@@ -15,7 +15,7 @@ const Users = (app, router) => {
         usersController.logoutUser(req, res)
     })
 
-    router.post('/user', (req, res) => {
+    router.get('/user', (req, res) => {
         usersController.getSessionInfo(req, res)
     })
 

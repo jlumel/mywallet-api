@@ -8,7 +8,7 @@ import Transactions from './routes/transactions.route.js'
 import Accounts from './routes/accounts.route.js'
 import Currencies from './routes/currencies.route.js'
 import Categories from './routes/categories.route.js'
-import SubCategories from './routes/subcategories.route.js'
+import Subcategories from './routes/subcategories.route.js'
 import cors from 'cors'
 import initSession from './middleware/initSession.js'
 
@@ -34,4 +34,4 @@ Transactions(router)
 Accounts(router)
 Currencies(router)
 Categories(router)
-SubCategories(router)
+Subcategories(router)
