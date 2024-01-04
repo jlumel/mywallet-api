@@ -91,12 +91,21 @@ const categoriesController = {
         const { name } = req.query
 
         try {
-            const count = await Transactions.countDocuments({ categoryName: name })
-            if (count) {
+
+            const subcategoriesCount = await Subcategories.countDocuments({ categoryName: name })
+
+            if (subcategoriesCount) {
+                return res.status(400).json({ message: "The category has related subcategories. Delete them first to delete the category" })
+            }
+
+            const transactionsCount = await Transactions.countDocuments({ categoryName: name })
+
+            if (transactionsCount) {
                 return res.status(400).json({ message: "The category has related transactions. Delete them first to delete the category" })
             }
 
             try {
+                
                 await Categories.deleteOne({ _id: id })
 
                 res.json({ message: "Category deleted successfully" })

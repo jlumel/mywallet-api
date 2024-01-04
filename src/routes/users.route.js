@@ -7,7 +7,7 @@ const Users = (app, router) => {
         usersController.registerUser(req, res)
     })
 
-    router.post('/user/login', (req, res) => {
+    app.post('/user/login', (req, res) => {
         usersController.loginUser(req, res)
     })
 
