@@ -99,29 +99,26 @@ const transactionsController = {
 
             const newTransaction = new Transactions(transaction)
 
-            newTransaction.save()
-                .then(async () => {
-                    try {
-                        switch (type) {
-                            case 'debit':
-                                await Accounts.updateOne({ name: accountName }, { balance: balance - amount })
-                                break;
+            try {
 
-                            case 'credit':
-                                await Accounts.updateOne({ name: accountName }, { balance: balance + amount })
-                                break;
-                        }
+                await newTransaction.save()
 
-                        res.status(201).json({ message: "Transaction created successfully" })
+                switch (type) {
+                    case 'debit':
+                        await Accounts.updateOne({ name: accountName }, { $inc: { balance: -amount } })
+                        break;
 
-                    } catch (err) {
-                        return res.status(500).json({ error: 'Internal server error' })
-                    }
+                    case 'credit':
+                        await Accounts.updateOne({ name: accountName }, { $inc: { balance: amount } })
+                        break;
+                }
 
-                })
-                .catch(err => {
-                    return res.status(400).json({ error: "The transaction could not be added" })
-                })
+                res.status(201).json({ message: "Transaction created successfully" })
+
+            } catch (err) {
+                return res.status(400).json({ error: "The transaction could not be added" })
+            }
+
         } else {
             return res.status(400).json({ message: "Information is missing" })
         }
@@ -145,17 +142,17 @@ const transactionsController = {
 
                 case "type":
                     if (value == 'debit') {
-                        await Accounts.updateOne({ name: transaction.accountName }, { balance: balance - (transaction.amount * 2) })
+                        await Accounts.updateOne({ name: transaction.accountName }, { $inc: {balance: -(transaction.amount * 2) }})
                     } else {
-                        await Accounts.updateOne({ name: transaction.accountName }, { balance: balance + (transaction.amount * 2) })
+                        await Accounts.updateOne({ name: transaction.accountName }, { $inc: {balance: transaction.amount * 2 }})
                     }
                     break;
 
                 case "amount":
                     if (transaction.type == 'debit') {
-                        await Accounts.updateOne({ name: transaction.accountName }, { balance: balance + transaction.amount - value })
+                        await Accounts.updateOne({ name: transaction.accountName }, { $inc: {balance: transaction.amount - value} })
                     } else {
-                        await Accounts.updateOne({ name: transaction.accountName }, { balance: balance - transaction.amount + value })
+                        await Accounts.updateOne({ name: transaction.accountName }, { $inc: {balance: -(transaction.amount + value)} })
                     }
                     break;
             }
@@ -182,11 +179,11 @@ const transactionsController = {
             switch (transaction.type) {
 
                 case 'debit':
-                    await Accounts.updateOne({ name: transaction.accountName }, { balance: balance - transaction.amount })
+                    await Accounts.updateOne({ name: transaction.accountName }, { $inc: {balance: -transaction.amount }})
                     break;
 
                 case 'credit':
-                    await Accounts.updateOne({ name: transaction.accountName }, { balance: balance + transaction.amount })
+                    await Accounts.updateOne({ name: transaction.accountName }, { $inc: {balance: transaction.amount }})
                     break;
             }
 
