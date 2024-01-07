@@ -97,7 +97,7 @@ const accountsController = {
 
         try {
 
-            const oldAccount = await Accounts.findOne({ _id: id })
+            const oldAccount = await Accounts.findById(id)
 
             const account = {}
 
