@@ -1,10 +1,6 @@
 import Users from '../models/users.model.js'
-import bcrypt from 'bcrypt'
 import { logger } from '../service/logger.service.js'
-
-const createHash = password => bcrypt.hashSync(password, 10)
-
-const validatePassword = (dbPassword, password) => bcrypt.compareSync(password, dbPassword)
+import { createHash, validatePassword } from '../utils.js'
 
 const userController = {
 
