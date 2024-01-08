@@ -8,7 +8,7 @@ const Accounts = router => {
         accountsController.getAccountById(req, res)
     })
     router.post('/accounts/totals', (req, res) => {
-        accountsController.getTotalsByCurrency(req, res)
+        accountsController.getTotals(req, res)
     }) 
     router.post('/accounts', (req, res) => {
         accountsController.createAccount(req, res)

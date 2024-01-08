@@ -32,25 +32,53 @@ const accountsController = {
         }
 
     },
-    getTotalsByCurrency: async (req, res) => {
+    getTotals: async (req, res) => {
 
         const userId = req.session.user._id
 
         try {
 
-            const totals = await Accounts.aggregate([
+            const totals = await Transactions.aggregate([
+                {
+                    $match: { userId: userId },
+                },
+                {
+                    $group: {
+                        _id: '$accountName',
+                        total: {
+                            $sum: {
+                                $cond: {
+                                    if: { $eq: ['$type', 'debit'] },
+                                    then: { $subtract: [0, '$amount'] },
+                                    else: '$amount'
+                                },
+                            },
+                        },
+                    },
+                },
+            ])
+
+            const totalsByCurrency = await Transactions.aggregate([
                 {
                     $match: { userId: userId },
                 },
                 {
                     $group: {
                         _id: '$currencyAcronym',
-                        count: { $sum: '$balance' },
+                        total: {
+                            $sum: {
+                                $cond: {
+                                    if: { $eq: ['$type', 'debit'] },
+                                    then: { $subtract: [0, '$amount'] },
+                                    else: '$amount'
+                                },
+                            },
+                        },
                     },
-                }
+                },
             ])
 
-            res.json(totals)
+            res.json({totals, totalsByCurrency})
 
         } catch (err) {
             res.status(500).json({ error: "Internal server error" })
@@ -71,7 +99,6 @@ const accountsController = {
                 name,
                 userId,
                 currencyAcronym,
-                balance: 0
             }
 
             const newAccount = new Accounts(account)

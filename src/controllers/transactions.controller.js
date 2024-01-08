@@ -63,7 +63,7 @@ const transactionsController = {
     },
     createTransaction: async (req, res) => {
 
-        // create a transaction based on model and update user's balance
+        // create a transaction based on model
 
         const userId = req.session.user._id
 
@@ -78,9 +78,6 @@ const transactionsController = {
                     return res.status(400).json({ message: "This account uses a different currency" })
                 }
 
-                if (type == "debit" && account.balance < amount) {
-                    return res.status(400).json({ message: "Insufficient funds" })
-                }
             } catch (err) {
                 return res.status(400).json({ error: "The transaction could not be added" })
             }
@@ -102,16 +99,6 @@ const transactionsController = {
             try {
 
                 await newTransaction.save()
-
-                switch (type) {
-                    case 'debit':
-                        await Accounts.updateOne({ name: accountName }, { $inc: { balance: -amount } })
-                        break;
-
-                    case 'credit':
-                        await Accounts.updateOne({ name: accountName }, { $inc: { balance: amount } })
-                        break;
-                }
 
                 res.status(201).json({ message: "Transaction created successfully" })
 
@@ -147,215 +134,13 @@ const transactionsController = {
                 }
             )
 
-            const account = await Accounts.findOne({ name: transaction.accountName })
-            const oldTransactionAccount = await Accounts.findOne({ name: oldTransaction.accountName })
 
-
-            if (req.body.accountName != oldTransaction.accountName) {
-
-                if (req.body.type != oldTransaction.type) {
-
-                    switch (req.body.type) {
-
-                        case "debit":
-                            if (req.body.amount != oldTransaction.amount) {
-
-                            } else {
-
-                            }
-                            break;
-
-                        case "credit":
-                            break;
-                    }
-
-                } else {
-                    switch (req.body.type) {
-
-                        case "debit":
-                            if (req.body.amount != oldTransaction.amount) {
-
-                            } else {
-
-                            }
-                            break;
-
-                        case "credit":
-                            break;
-                    }
-                }
-
-            } else {
-
-                if (req.body.type != oldTransaction.type) {
-
-                    switch (req.body.type) {
-
-                        case "debit":
-                            if (req.body.amount != oldTransaction.amount) {
-
-                            } else {
-
-                            }
-                            break;
-
-                        case "credit":
-                            break;
-                    }
-
-                } else {
-                    switch (req.body.type) {
-
-                        case "debit":
-                            if (req.body.amount != oldTransaction.amount) {
-
-                            } else {
-
-                            }
-                            break;
-
-                        case "credit":
-                            break;
-                    }
-                }
-
-            }
-
-            // if (req.body.accountName != oldTransaction.accountName) {
-
-            //     switch (oldTransaction.type) {
-
-            //         case "debit":
-
-            //             if (account.balance < transaction.amount) {
-            //                 return res.status(400).json({ message: "Insufficient funds in new account" })
-            //             }
-
-
-            //             await Accounts.updateOne({ name: oldTransaction.accountName }, { $inc: { balance: oldTransaction.amount } })
-            //             await Accounts.updateOne({ name: transaction.accountName }, { $inc: { balance: -oldTransaction.amount } })
-
-            //             break;
-
-            //         case "credit":
-
-            //             if (oldTransactionAccount.balance < oldTransaction.amount) {
-
-            //                 return res.status(400).json({ message: "Insufficient funds in previous account" })
-            //             }
-
-            //             await Accounts.updateOne({ name: oldTransaction.accountName }, { $inc: { balance: -oldTransaction.amount } })
-            //             await Accounts.updateOne({ name: transaction.accountName }, { $inc: { balance: oldTransaction.amount } })
-
-            //             break;
-            //     }
-
-            // }
-
-            // if (req.body.amount != oldTransaction.amount) {
-
-            //     if (req.body.type != oldTransaction.type) {
-            //         switch (req.body.type) {
-
-            //             case "debit":
-
-            //                 if (account.balance < oldTransaction.amount + transaction.amount && req.body.accountName != oldTransaction.accountName) {
-
-            //                     return res.status(400).json({ message: "Insufficient funds in new account" })
-
-            //                 } else if (account.balance < oldTransaction.amount + transaction.amount && req.body.accountName == oldTransaction.accountName) {
-
-            //                     return res.status(400).json({ message: "Insufficient funds" })
-            //                 }
-
-            //                 await Accounts.updateOne({ name: transaction.accountName }, { $inc: { balance: -(oldTransaction.amount * 2) } })
-            //                 await Accounts.updateOne({ name: transaction.accountName }, { $inc: { balance: -(transaction.amount - oldTransaction.amount) } })
-
-            //                 break;
-
-            //             case "credit":
-
-            //                 if (account.balance < transaction.amount - oldTransaction.amount && req.body.accountName != oldTransaction.accountName) {
-
-            //                     return res.status(400).json({ message: "Insufficient funds in new account" })
-
-            //                 } else if (account.balance < transaction.amount - oldTransaction.amount && req.body.accountName == oldTransaction.accountName) {
-
-            //                     return res.status(400).json({ message: "Insufficient funds" })
-            //                 }
-
-            //                 await Accounts.updateOne({ name: transaction.accountName }, { $inc: { balance: oldTransaction.amount * 2 } })
-            //                 await Accounts.updateOne({ name: transaction.accountName }, { $inc: { balance: transaction.amount - oldTransaction.amount } })
-
-            //                 break;
-            //         }
-
-            //     } else {
-
-            //         if (transaction.type == "debit") {
-
-            //             if (account.balance < oldTransaction.amount + transaction.amount && req.body.accountName != oldTransaction.accountName) {
-
-            //                 return res.status(400).json({ message: "Insufficient funds in new account" })
-
-            //             } else if (account.balance < oldTransaction.amount + transaction.amount && req.body.accountName == oldTransaction.accountName) {
-
-            //                 return res.status(400).json({ message: "Insufficient funds" })
-            //             }
-
-            //             await Accounts.updateOne({ name: transaction.accountName }, { $inc: { balance: -(transaction.amount - oldTransaction.amount) } })
-
-            //         } else {
-
-            //             if (account.balance < transaction.amount - oldTransaction.amount && req.body.accountName != oldTransaction.accountName) {
-
-            //                 return res.status(400).json({ message: "Insufficient funds in new account" })
-
-            //             } else if (account.balance < transaction.amount - oldTransaction.amount && req.body.accountName == oldTransaction.accountName) {
-
-            //                 return res.status(400).json({ message: "Insufficient funds" })
-            //             }
-
-            //             await Accounts.updateOne({ name: transaction.accountName }, { $inc: { balance: transaction.amount - oldTransaction.amount } })
-            //         }
-
-            //     }
-
-            // } else if (req.body.type != oldTransaction.type) {
-
-            //     switch (req.body.type) {
-
-            //         case "debit":
-
-            //             if (account.balance < (oldTransaction.amount * 2) && req.body.accountName != oldTransaction.accountName) {
-
-            //                 return res.status(400).json({ message: "Insufficient funds in new account" })
-
-            //             } else if (account.balance < (oldTransaction.amount * 2) && req.body.accountName == oldTransaction.accountName) {
-
-            //                 return res.status(400).json({ message: "Insufficient funds" })
-            //             }
-
-            //             await Accounts.updateOne({ name: transaction.accountName }, { $inc: { balance: -(oldTransaction.amount * 2) } })
-
-            //             break;
-
-            //         case "credit":
-
-            //             await Accounts.updateOne({ name: transaction.accountName }, { $inc: { balance: oldTransaction.amount * 2 } })
-
-            //             break;
-            //     }
-
-            // }
 
             res.json({ message: "Transaction updated successfully" })
 
         } catch (err) {
             return res.status(500).json({ error: 'Internal server error' })
         }
-
-
     },
     deleteTransaction: async (req, res) => {
 
@@ -368,29 +153,6 @@ const transactionsController = {
             const transaction = await Transactions.findOne({ _id: id })
 
             await Transactions.deleteOne({ _id: id })
-
-            switch (transaction.type) {
-
-                case 'debit':
-
-                    await Accounts.updateOne({ name: transaction.accountName }, { $inc: { balance: transaction.amount } })
-
-                    break;
-
-                case 'credit':
-
-                    const account = await Accounts.findOne({ name: transaction.accountName })
-
-                    if (account.balance < transaction.amount) {
-
-                        return res.status(400).json({ message: "Insufficient funds" })
-
-                    }
-
-                    await Accounts.updateOne({ name: transaction.accountName }, { $inc: { balance: -transaction.amount } })
-
-                    break;
-            }
 
             res.json({ message: "Transaction deleted successfully" })
 
