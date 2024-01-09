@@ -8,7 +8,7 @@ const initSession = app => {
             mongoUrl: process.env.MONGO_URL,
         }),
         secret: process.env.SECRET_KEY,
-        cookie: { sameSite: 'none', secure: true, maxAge: Number(process.env.SESSION_TTL) * 4 },
+        cookie: { domain: '.onrender', sameSite: 'none', secure: true, maxAge: Number(process.env.SESSION_TTL) * 4 },
         resave: false,
         saveUninitialized: false
     }))
