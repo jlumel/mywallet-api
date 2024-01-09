@@ -17,7 +17,7 @@ const router = express.Router()
 
 //Middlewares
 
-app.use(cors({credentials: true, origin: 'https://lumel.dev/'}))
+app.use(cors({credentials: true, origin: 'https://lumel.dev'}))
 app.use(compression())
 app.use(express.json())
 app.use(cookieParser())
