@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "",
-  "main": "app.js",
+  "main": "./src/app.js",
   "scripts": {
     "start": "nodemon --env-file .env ./src/app.js"
   },
