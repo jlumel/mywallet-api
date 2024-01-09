@@ -13,6 +13,7 @@ const initApp = app => {
             logger.info('Initializing Server...')
             const server = app.listen(PORT, () => {
                 logger.info(`Server up at PORT ${PORT}`)
+                process.env.DEV_ENVIRONMENT && logger.info('Dev environment')
             })
 
             server.on('error', error => {

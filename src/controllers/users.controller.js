@@ -1,4 +1,4 @@
-import Users from '../models/users.model.js'
+import Users from '../models/Users.model.js'
 import { logger } from '../service/logger.service.js'
 import { createHash, validatePassword } from '../utils.js'
 

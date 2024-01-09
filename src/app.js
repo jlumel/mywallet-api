@@ -17,6 +17,7 @@ const router = express.Router()
 
 //Middlewares
 
+process.env.DEV_ENVIRONMENT ? app.use(cors({credentials: true, origin: 'http://localhost:5173'})) :
 app.use(cors({credentials: true, origin: 'http://localhost:5173'}))
 app.use(compression())
 app.use(express.json())
