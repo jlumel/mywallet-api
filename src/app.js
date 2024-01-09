@@ -17,8 +17,12 @@ const router = express.Router()
 
 //Middlewares
 
+<<<<<<< HEAD
 process.env.DEV_ENVIRONMENT ? app.use(cors({credentials: true, origin: 'http://localhost:5173'})) :
 app.use(cors({credentials: true, origin: 'http://localhost:5173'}))
+=======
+app.use(cors({credentials: true, origin: 'https://lumel.dev'}))
+>>>>>>> 22f66a9293e43f0c51802121731c10e0874ee8ce
 app.use(compression())
 app.use(express.json())
 app.use(cookieParser())

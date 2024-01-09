@@ -5,8 +5,12 @@
   "description": "",
   "main": "./src/app.js",
   "scripts": {
+<<<<<<< HEAD
     "start": "node ./src/app.js",
     "dev": "nodemon --env-file .env ./src/app.js"
+=======
+    "start": "nodemon ./src/app.js"
+>>>>>>> 22f66a9293e43f0c51802121731c10e0874ee8ce
   },
   "keywords": [],
   "author": "Joaquin Lumelsky",
