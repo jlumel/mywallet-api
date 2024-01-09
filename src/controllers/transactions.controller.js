@@ -1,5 +1,6 @@
 import Transactions from "../models/Transactions.model.js"
 import Accounts from "../models/Accounts.model.js"
+import { errorLog } from '../service/logger.service.js'
 
 const transactionsController = {
 
@@ -42,6 +43,7 @@ const transactionsController = {
             res.json(transactions)
 
         } catch (err) {
+            errorLog(err)
             res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -58,6 +60,7 @@ const transactionsController = {
             const transactions = await Transactions.find({ userId, _id: id }).exec()
             res.json(transactions)
         } catch (err) {
+            errorLog(err)
             res.status(500).json({ error: 'Internal server error' })
         }
     },
@@ -79,6 +82,7 @@ const transactionsController = {
                 }
 
             } catch (err) {
+                errorLog(err)
                 return res.status(400).json({ error: "The transaction could not be added" })
             }
 
@@ -103,6 +107,7 @@ const transactionsController = {
                 res.status(201).json({ message: "Transaction created successfully" })
 
             } catch (err) {
+                errorLog(err)
                 return res.status(400).json({ error: "The transaction could not be added" })
             }
 
@@ -117,8 +122,6 @@ const transactionsController = {
         const { id } = req.params
 
         try {
-
-            const oldTransaction = await Transactions.findById(id)
 
             const transaction = {}
 
@@ -139,6 +142,7 @@ const transactionsController = {
             res.json({ message: "Transaction updated successfully" })
 
         } catch (err) {
+            errorLog(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
     },
@@ -150,14 +154,13 @@ const transactionsController = {
 
         try {
 
-            const transaction = await Transactions.findOne({ _id: id })
-
             await Transactions.deleteOne({ _id: id })
 
             res.json({ message: "Transaction deleted successfully" })
 
         } catch (err) {
 
+            errorLog(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
     }

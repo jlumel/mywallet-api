@@ -1,6 +1,7 @@
 import Currencies from '../models/Currencies.model.js'
 import Transactions from '../models/Transactions.model.js'
 import Accounts from '../models/Accounts.model.js'
+import {errorLog} from '../service/logger.service.js'
 
 const currenciesController = {
 
@@ -12,6 +13,7 @@ const currenciesController = {
             const currencies = await Currencies.find({ userId }).exec()
             res.json(currencies)
         } catch (err) {
+            errorLog(err)
             res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -25,6 +27,7 @@ const currenciesController = {
             const currencies = await Currencies.find({ userId, _id: id }).exec()
             res.json(currencies)
         } catch (err) {
+            errorLog(err)
             res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -52,6 +55,7 @@ const currenciesController = {
                     res.status(201).json({ message: "Currency created successfully" })
                 })
                 .catch(err => {
+                    errorLog(err)
                     return res.status(400).json({ error: "The currency could not be created" })
                 })
         } else {
@@ -95,6 +99,7 @@ const currenciesController = {
             res.json({ message: "Currency updated successfully" })
 
         } catch (err) {
+            errorLog(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -121,10 +126,12 @@ const currenciesController = {
                 res.json({ message: "Currency deleted successfully" })
 
             } catch (err) {
+                errorLog(err)
                 return res.status(500).json({ error: 'Internal server error' })
             }
 
         } catch (err) {
+            errorLog(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
 

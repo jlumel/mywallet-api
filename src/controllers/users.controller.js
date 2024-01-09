@@ -1,5 +1,5 @@
 import Users from '../models/Users.model.js'
-import { logger } from '../service/logger.service.js'
+import { logger, errorLog } from '../service/logger.service.js'
 import { createHash, validatePassword } from '../utils.js'
 
 const userController = {
@@ -24,6 +24,7 @@ const userController = {
                 newUser.save()
                     .then(() => res.json({ message: "User registered correctly" }))
                     .catch(err => {
+                        errorLog(err)
                         res.status(500).json({ error: "Internal server error" })
                     })
 
@@ -31,6 +32,8 @@ const userController = {
                 res.status(400).json({ message: 'All fields are required' })
             }
         } catch (err) {
+
+            errorLog(err)
             res.status(500).json({ error: "Internal server error" })
         }
     },
@@ -49,11 +52,13 @@ const userController = {
                     res.status(403).json({ message: 'Invalid password' })
                 } else {
                     req.session.user = user
-                    logger.info("Signed in")
+                    process.env.DEV_ENVIRONMENT && logger.info("Signed in")
                     res.json({ isLogged: true, username })
                 }
             }
         } catch (err) {
+
+            errorLog(err)
             res.status(500).json({ error: "Internal server error" })
         }
     },
@@ -63,12 +68,13 @@ const userController = {
 
         req.session.destroy(function (err) {
             if (err) {
+                errorLog(err)
                 res.status(500).json({ error: "Internal server error" })
             } else {
                 res.json({ message: "Logged out successfully" })
             }
         })
-        logger.info("Logged out")
+        process.env.DEV_ENVIRONMENT && logger.info("Logged out")
 
     },
     getSessionInfo: (req, res) => {
@@ -92,6 +98,7 @@ const userController = {
             res.json({ message: "Password updated successfully" })
 
         } catch (err) {
+            errorLog(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
     }
