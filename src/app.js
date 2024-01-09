@@ -18,7 +18,7 @@ const router = express.Router()
 //Middlewares
 
 process.env.DEV_ENVIRONMENT ? app.use(cors({credentials: true, origin: 'http://localhost:5173'})) :
-app.use(cors({credentials: true, origin: 'https://my-wallet-app-1rhi.onrender.com/'}))
+app.use(cors({credentials: true, origin: 'https://my-wallet-app-1rhi.onrender.com'}))
 app.use(compression())
 app.use(express.json())
 app.use(cookieParser())
