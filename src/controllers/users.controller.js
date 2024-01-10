@@ -1,6 +1,7 @@
 import Users from '../models/Users.model.js'
 import { logger, errorLog } from '../service/logger.service.js'
 import { createHash, validatePassword } from '../utils.js'
+import jwt from 'jsonwebtoken'
 
 const userController = {
 
@@ -51,9 +52,10 @@ const userController = {
                 if (!validatePassword(user.password, password)) {
                     res.status(403).json({ message: 'Invalid password' })
                 } else {
+                    const token = jwt.sign({password: createHash(password), ...user}, process.env.SECRET_KEY, { expiresIn: '4h'})
                     req.session.user = user
                     process.env.DEV_ENVIRONMENT && logger.info("Signed in")
-                    res.json({ isLogged: true, username })
+                    res.json({ isLogged: true, username, token })
                 }
             }
         } catch (err) {
@@ -79,10 +81,14 @@ const userController = {
     },
     getSessionInfo: (req, res) => {
 
-        if (req.session.user && req.session.user.username) {
+        const token = req.headers.authorization
+
+        if (req.session.user && req.session.user.username && token) {
             res.json({ isLogged: true, username: req.session.user.username })
         } else {
-            res.json({ isLogged: false, username: "" })
+            const jwtToken = token.split(' ')[1]
+
+            res.json({ isLogged: false, username: "", token: jwtToken })
         }
     },
     changePassword: async (req, res) => {

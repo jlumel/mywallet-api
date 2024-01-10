@@ -1,8 +1,23 @@
+import jwt from 'jsonwebtoken'
+
 const requireAuth = (req, res, next) => {
 
-    if (req.session && req.session.user) {
+    const token = req.headers.authorization
 
-        next()
+    if (req.session && req.session.user && token) {
+
+        const jwToken = token.split(' ')[1]
+
+        jwt.verify(jwToken, process.env.SECRET_KEY, (err, value) => {
+            if (err) {
+                res.status(403).send({
+                    message: 'Invalid token'
+                })
+            } else {
+                next()
+            }
+        })
+
     } else {
         res.status(401).json({ isLogged: false, username: "", message: 'Unauthorized' })
     }
