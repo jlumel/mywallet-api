@@ -43,7 +43,7 @@ const transactionsController = {
             res.json(transactions)
 
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -60,7 +60,7 @@ const transactionsController = {
             const transactions = await Transactions.find({ userId, _id: id }).exec()
             res.json(transactions)
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             res.status(500).json({ error: 'Internal server error' })
         }
     },
@@ -82,7 +82,7 @@ const transactionsController = {
                 }
 
             } catch (err) {
-                errorLog(err)
+                errorLog.error(err)
                 return res.status(400).json({ error: "The transaction could not be added" })
             }
 
@@ -107,7 +107,7 @@ const transactionsController = {
                 res.status(201).json({ message: "Transaction created successfully" })
 
             } catch (err) {
-                errorLog(err)
+                errorLog.error(err)
                 return res.status(400).json({ error: "The transaction could not be added" })
             }
 
@@ -142,7 +142,7 @@ const transactionsController = {
             res.json({ message: "Transaction updated successfully" })
 
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
     },
@@ -160,7 +160,7 @@ const transactionsController = {
 
         } catch (err) {
 
-            errorLog(err)
+            errorLog.error(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
     }

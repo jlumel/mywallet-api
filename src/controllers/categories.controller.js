@@ -13,7 +13,7 @@ const categoriesController = {
             const categories = await Categories.find({ userId }).exec()
             res.json(categories)
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -27,7 +27,7 @@ const categoriesController = {
             const category = await Categories.find({ userId, _id: id }).exec()
             res.json(category)
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -53,7 +53,7 @@ const categoriesController = {
                     res.status(201).json({ message: "Category created successfully" })
                 })
                 .catch(err => {
-                    errorLog(err)
+                    errorLog.error(err)
                     return res.status(400).json({ error: "The category could not be created" })
                 })
         } else {
@@ -85,7 +85,7 @@ const categoriesController = {
             }
 
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -116,12 +116,12 @@ const categoriesController = {
                 res.json({ message: "Category deleted successfully" })
 
             } catch (err) {
-                errorLog(err)
+                errorLog.error(err)
                 return res.status(500).json({ error: 'Internal server error' })
             }
 
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
     }

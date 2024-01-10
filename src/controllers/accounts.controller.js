@@ -14,7 +14,7 @@ const accountsController = {
             const accounts = await Accounts.find({ userId })
             res.json(accounts)
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -30,7 +30,7 @@ const accountsController = {
             const account = await Accounts.find({ userId, _id: id }).exec()
             res.json(account)
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -84,7 +84,7 @@ const accountsController = {
             res.json({totals, totalsByCurrency})
 
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             res.status(500).json({ error: "Internal server error" })
         }
 
@@ -113,7 +113,7 @@ const accountsController = {
                     res.status(201).json({ message: "Account created successfully" })
                 })
                 .catch(err => {
-                    errorLog(err)
+                    errorLog.error(err)
                     return res.status(400).json({ error: "The transaction could not be added" })
                 })
         } else {
@@ -152,7 +152,7 @@ const accountsController = {
             res.json({ message: "Account updated successfully" })
 
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -176,12 +176,12 @@ const accountsController = {
                 res.json({ message: "Account deleted successfully" })
 
             } catch (err) {
-                errorLog(err)
+                errorLog.error(err)
                 return res.status(500).json({ error: 'Internal server error' })
             }
 
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
     }

@@ -25,7 +25,7 @@ const userController = {
                 newUser.save()
                     .then(() => res.json({ message: "User registered correctly" }))
                     .catch(err => {
-                        errorLog(err)
+                        errorLog.error(err)
                         res.status(500).json({ error: "Internal server error" })
                     })
 
@@ -34,7 +34,7 @@ const userController = {
             }
         } catch (err) {
 
-            errorLog(err)
+            errorLog.error(err)
             res.status(500).json({ error: "Internal server error" })
         }
     },
@@ -60,7 +60,7 @@ const userController = {
             }
         } catch (err) {
 
-            errorLog(err)
+            errorLog.error(err)
             res.status(500).json({ error: "Internal server error" })
         }
     },
@@ -70,7 +70,7 @@ const userController = {
 
         req.session.destroy(function (err) {
             if (err) {
-                errorLog(err)
+                errorLog.error(err)
                 res.status(500).json({ error: "Internal server error" })
             } else {
                 res.json({ message: "Logged out successfully" })
@@ -104,7 +104,7 @@ const userController = {
             res.json({ message: "Password updated successfully" })
 
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
     }

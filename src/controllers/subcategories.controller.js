@@ -12,7 +12,7 @@ const subcategoriesController = {
             const subcategories = await Subcategories.find({ userId }).exec()
             res.json(subcategories)
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -26,7 +26,7 @@ const subcategoriesController = {
             const subcategory = await Subcategories.find({ userId, _id: id }).exec()
             res.json(subcategory)
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -54,7 +54,7 @@ const subcategoriesController = {
                     res.status(201).json({ message: "Subcategory created successfully" })
                 })
                 .catch(err => {
-                    errorLog(err)
+                    errorLog.error(err)
                     return res.status(400).json({ error: "The Subcategory could not be created" })
                 })
         } else {
@@ -87,7 +87,7 @@ const subcategoriesController = {
                     await Transactions.updateMany({ userId: req.session.user._id, categoryName: oldSubcategory.categoryName }, { categoryName: req.body.categoryName })
                 }
             } catch (err) {
-                errorLog(err)
+                errorLog.error(err)
             }
 
 
@@ -95,7 +95,7 @@ const subcategoriesController = {
             res.json({ message: "Subcategory updated successfully" })
 
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
 
@@ -117,12 +117,12 @@ const subcategoriesController = {
                 res.json({ message: "Subcategory deleted successfully" })
 
             } catch (err) {
-                errorLog(err)
+                errorLog.error(err)
                 return res.status(500).json({ error: 'Internal server error' })
             }
 
         } catch (err) {
-            errorLog(err)
+            errorLog.error(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
 
