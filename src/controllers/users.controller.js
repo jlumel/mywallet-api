@@ -76,7 +76,7 @@ const userController = {
                         logger.info('No se pudo determinar el país de origen.')
                     }
                     process.env.DEV_ENVIRONMENT && logger.info("Signed in")
-                    res.json({ isLogged: true, username, token })
+                    res.json({ isLogged: true, username, token, country })
                 }
             }
         } catch (err) {
