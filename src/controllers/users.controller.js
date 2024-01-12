@@ -68,15 +68,16 @@ const userController = {
                     req.session.user = user
                     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
                     const geo = geoip.lookup(ip)
-
+                    process.env.DEV_ENVIRONMENT && logger.info("Signed in")
                     if (geo) {
                         const country = geo.country;
                         logger.info(country)
+                        res.json({ isLogged: true, username, token, country })
                     } else {
                         logger.info('No se pudo determinar el país de origen.')
                     }
-                    process.env.DEV_ENVIRONMENT && logger.info("Signed in")
-                    res.json({ isLogged: true, username, token, country })
+                    
+                    res.json({ isLogged: true, username, token })
                 }
             }
         } catch (err) {
