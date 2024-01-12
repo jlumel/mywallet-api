@@ -67,7 +67,10 @@ const userController = {
                     const token = jwt.sign({ password: createHash(password), ...user }, process.env.SECRET_KEY, { expiresIn: '4h' })
                     req.session.user = user
                     const ip = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.headers['x-client-ip'] || req.connection.remoteAddress.split(':')[0]
-                    logger.info(ip)
+                    logger.info(req.headers['x-forwarded-for'])
+                    logger.info(req.headers['x-real-ip'])
+                    logger.info(req.headers['x-client-ip'])
+                    logger.info(req.connection.remoteAddress)
                     const geo = geoip.lookup(ip)
                     process.env.DEV_ENVIRONMENT && logger.info("Signed in")
                     if (geo) {
