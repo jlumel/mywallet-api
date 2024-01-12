@@ -1,16 +1,14 @@
 import Currencies from '../models/Currencies.model.js'
 import Transactions from '../models/Transactions.model.js'
 import Accounts from '../models/Accounts.model.js'
-import {errorLog} from '../service/logger.service.js'
+import { errorLog } from '../service/logger.service.js'
 
 const currenciesController = {
 
     getCurrencies: async (req, res) => {
 
-        const userId = req.session.user._id
-
         try {
-            const currencies = await Currencies.find({ userId }).exec()
+            const currencies = await Currencies.find({}).exec()
             res.json(currencies)
         } catch (err) {
             errorLog.error(err)
@@ -20,11 +18,11 @@ const currenciesController = {
     },
     getCurrencyById: async (req, res) => {
 
-        const userId = req.session.user._id
+
         const { id } = req.params
 
         try {
-            const currencies = await Currencies.find({ userId, _id: id }).exec()
+            const currencies = await Currencies.findById(id).exec()
             res.json(currencies)
         } catch (err) {
             errorLog.error(err)
@@ -34,8 +32,6 @@ const currenciesController = {
     },
     createCurrency: (req, res) => {
 
-        const userId = req.session.user._id
-
         const { name, acronym, symbol } = req.body
 
         if (name && acronym && symbol) {
@@ -44,7 +40,6 @@ const currenciesController = {
                 name,
                 acronym,
                 symbol,
-                userId,
             }
 
             const newCurrency = new Currencies(currency)
@@ -86,14 +81,14 @@ const currenciesController = {
 
             if (req.body.name) {
 
-                await Transactions.updateMany({ userId: req.session.user._id, currencyName: oldCurrency.name }, { currencyName: req.body.name })
+                await Transactions.updateMany({ currencyName: oldCurrency.name }, { currencyName: req.body.name })
             }
 
             if (req.body.acronym) {
 
-                await Transactions.updateMany({ userId: req.session.user._id, currencyAcronym: oldCurrency.acronym }, { currencyAcronym: req.body.acronym })
+                await Transactions.updateMany({ currencyAcronym: oldCurrency.acronym }, { currencyAcronym: req.body.acronym })
 
-                await Accounts.updateMany({ userId: req.session.user._id, currencyAcronym: oldCurrency.acronym }, { currencyAcronym: req.body.acronym })
+                await Accounts.updateMany({ currencyAcronym: oldCurrency.acronym }, { currencyAcronym: req.body.acronym })
             }
 
             res.json({ message: "Currency updated successfully" })
@@ -136,7 +131,6 @@ const currenciesController = {
         }
 
     }
-
 }
 
 export default currenciesController

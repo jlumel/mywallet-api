@@ -1,7 +1,7 @@
 import Categories from '../models/Categories.model.js'
 import Subcategories from '../models/Subcategories.model.js'
 import Transactions from '../models/Transactions.model.js'
-import {errorLog} from '../service/logger.service.js'
+import { errorLog } from '../service/logger.service.js'
 
 const categoriesController = {
 
@@ -110,7 +110,7 @@ const categoriesController = {
             }
 
             try {
-                
+
                 await Categories.deleteOne({ _id: id })
 
                 res.json({ message: "Category deleted successfully" })

@@ -1,7 +1,11 @@
 import Users from '../models/Users.model.js'
+import Accounts from '../models/Accounts.model.js'
+import Categories from '../models/Categories.model.js'
+import Subcategories from '../models/Subcategories.model.js'
 import { logger, errorLog } from '../service/logger.service.js'
 import { createHash, validatePassword } from '../utils.js'
 import jwt from 'jsonwebtoken'
+import geoip from 'geoip-lite'
 
 const userController = {
 
@@ -22,12 +26,20 @@ const userController = {
                 const hash = createHash(password)
                 const newUser = new Users({ username: username, password: hash })
 
-                newUser.save()
-                    .then(() => res.json({ message: "User registered correctly" }))
-                    .catch(err => {
-                        errorLog.error(err)
-                        res.status(500).json({ error: "Internal server error" })
-                    })
+                try {
+
+                    await newUser.save()
+
+                    const newAccount = new Accounts({ userId: user._id, name: "Cash", })
+                    Categories.insertMany()
+                    Subcategories.insertMany()
+
+                    res.json({ message: "User registered correctly" })
+
+                } catch (err) {
+                    errorLog.error(err)
+                    res.status(500).json({ error: "Internal server error" })
+                }
 
             } else {
                 res.status(400).json({ message: 'All fields are required' })
@@ -52,8 +64,17 @@ const userController = {
                 if (!validatePassword(user.password, password)) {
                     res.status(403).json({ message: 'Invalid password' })
                 } else {
-                    const token = jwt.sign({password: createHash(password), ...user}, process.env.SECRET_KEY, { expiresIn: '4h'})
+                    const token = jwt.sign({ password: createHash(password), ...user }, process.env.SECRET_KEY, { expiresIn: '4h' })
                     req.session.user = user
+                    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress
+                    const geo = geoip.lookup(ip)
+
+                    if (geo) {
+                        const country = geo.country;
+                        logger.info(country)
+                    } else {
+                        logger.info('No se pudo determinar el país de origen.')
+                    }
                     process.env.DEV_ENVIRONMENT && logger.info("Signed in")
                     res.json({ isLogged: true, username, token })
                 }

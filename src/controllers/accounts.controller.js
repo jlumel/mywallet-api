@@ -1,6 +1,6 @@
 import Accounts from '../models/Accounts.model.js'
 import Transactions from '../models/Transactions.model.js'
-import {errorLog} from '../service/logger.service.js'
+import { errorLog } from '../service/logger.service.js'
 
 const accountsController = {
 
@@ -81,7 +81,7 @@ const accountsController = {
                 },
             ])
 
-            res.json({totals, totalsByCurrency})
+            res.json({ totals, totalsByCurrency })
 
         } catch (err) {
             errorLog.error(err)
