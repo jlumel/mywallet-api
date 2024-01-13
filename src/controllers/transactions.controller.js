@@ -75,7 +75,7 @@ const transactionsController = {
         if (type && currencyAcronym && amount && !isNaN(Number(amount)) && amount > 0 && accountName && categoryName) {
 
             try {
-                const account = await Accounts.findOne({ name: accountName })
+                const account = await Accounts.findOne({ userId, name: accountName })
 
                 if (account.currencyAcronym != currencyAcronym) {
                     return res.status(400).json({ message: "This account uses a different currency" })
