@@ -5,7 +5,6 @@ import Subcategories from '../models/Subcategories.model.js'
 import { logger, errorLog } from '../service/logger.service.js'
 import { createHash, validatePassword } from '../utils.js'
 import jwt from 'jsonwebtoken'
-import geoip from 'geoip-lite'
 
 const userController = {
 
@@ -26,20 +25,12 @@ const userController = {
                 const hash = createHash(password)
                 const newUser = new Users({ username: username, password: hash })
 
-                try {
-
-                    await newUser.save()
-
-                    const newAccount = new Accounts({ userId: user._id, name: "Cash", })
-                    Categories.insertMany()
-                    Subcategories.insertMany()
-
-                    res.json({ message: "User registered correctly" })
-
-                } catch (err) {
-                    errorLog.error(err)
-                    res.status(500).json({ error: "Internal server error" })
-                }
+                newUser.save()
+                    .then(() => res.json({ message: "User registered correctly" }))
+                    .catch(err => {
+                        errorLog.error(err)
+                        res.status(500).json({ error: "Internal server error" })
+                    })
 
             } else {
                 res.status(400).json({ message: 'All fields are required' })
@@ -66,18 +57,7 @@ const userController = {
                 } else {
                     const token = jwt.sign({ password: createHash(password), ...user }, process.env.SECRET_KEY, { expiresIn: '4h' })
                     req.session.user = user
-                    const ip = req.headers['x-forwarded-for'].split(',')[0]
-                    logger.info(ip)
-                    const geo = geoip.lookup(ip)
                     process.env.DEV_ENVIRONMENT && logger.info("Signed in")
-                    if (geo) {
-                        const country = geo.country;
-                        logger.info(country)
-                        res.json({ isLogged: true, username, token, country })
-                    } else {
-                        logger.info('No se pudo determinar el país de origen.')
-                    }
-                    
                     res.json({ isLogged: true, username, token })
                 }
             }
@@ -130,6 +110,31 @@ const userController = {
             errorLog.error(err)
             return res.status(500).json({ error: 'Internal server error' })
         }
+    },
+    firstLogin: async (req, res) => {
+        const userId = req.session.user._id
+
+        const { currencyAcronym } = req.body
+
+        try {
+            await new Accounts({ userId, name: "Cash", currencyAcronym }).save()
+
+            await Categories.insertMany([
+                { userId, name: "Services" }, { userId, name: "Salary" }, { userId, name: "Rent" }, { userId, name: "Public Transport" }, { userId, name: "Car" }, { userId, name: "Health" }, { userId, name: "Clothing" }, { userId, name: "Supermarket" }, { userId, name: "Credit card" }, { userId, name: "Food & Beverage" }, { userId, name: "Home" }, { userId, name: "Entertainment" }, { userId, name: "Sports" }, { userId, name: "Beauty & Self-Care" }, { userId, name: "Gifts" }, { userId, name: "Taxes" }, { userId, name: "Investment" }
+            ])
+
+            await Subcategories.insertMany([
+                { userId, categoryName: "Services", name: "Electricity" }, { userId, categoryName: "Services", name: "Water" }, { userId, categoryName: "Services", name: "Gas" }, { userId, categoryName: "Services", name: "Mobile Line" }, { userId, categoryName: "Services", name: "Internet & Cable TV" }, { userId, categoryName: "Services", name: "Insurance" }, { userId, categoryName: "Car", name: "Fuel" }, { userId, categoryName: "Car", name: "Insurance" }, { userId, categoryName: "Health", name: "Farmacy" }, { userId, categoryName: "Food & Beverage", name: "Delivery" }, { userId, categoryName: "Food & Beverage", name: "Bars & Restaurants" }
+            ])
+
+            res.json({ message: "Default Wallet Items created successfully" })
+
+        } catch (err) {
+            errorLog.error(err)
+            return res.status(500).json({ error: "Internal server error" })
+        }
+
+
     }
 }
 
