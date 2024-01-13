@@ -14,7 +14,7 @@ const userController = {
 
         const { username, password, password2 } = req.body
         try {
-            const user = await Users.findOne({ username: username }).exec()
+            const user = await Users.findOne({ username: username.toLowerCase() }).exec()
 
             if (user) {
                 res.status(400).json({ message: 'User already exists' })
@@ -23,7 +23,7 @@ const userController = {
                     return res.status(400).json({ message: 'Passwords do not match' })
                 }
                 const hash = createHash(password)
-                const newUser = new Users({ username: username, password: hash })
+                const newUser = new Users({ username: username.toLowerCase(), password: hash })
 
                 newUser.save()
                     .then(() => res.json({ message: "User registered correctly" }))
@@ -47,7 +47,7 @@ const userController = {
 
         let { username, password } = req.body
         try {
-            const user = await Users.findOne({ username: username }).exec()
+            const user = await Users.findOne({ username: username.toLowerCase() }).exec()
 
             if (!user) {
                 res.status(400).json({ message: 'User does not exist' })
@@ -58,7 +58,7 @@ const userController = {
                     const token = jwt.sign({ password: createHash(password), ...user }, process.env.SECRET_KEY, { expiresIn: '4h' })
                     req.session.user = user
                     process.env.DEV_ENVIRONMENT && logger.info("Signed in")
-                    res.json({ isLogged: true, username, token })
+                    res.json({ isLogged: true, username: username.toLowerCase(), token })
                 }
             }
         } catch (err) {
