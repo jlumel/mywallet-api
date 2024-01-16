@@ -1,6 +1,0 @@
-[2024-01-12T11:52:36.177] [ERROR] error - TypeError: Cannot read properties of null (reading 'country')
-    at Object.loginUser (file:///D:/Lumel/Repos/cs50-final-project-back/src/controllers/users.controller.js:73:45)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-[2024-01-12T11:54:58.988] [ERROR] error - TypeError: Cannot read properties of null (reading 'country')
-    at Object.loginUser (file:///D:/Lumel/Repos/cs50-final-project-back/src/controllers/users.controller.js:73:45)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
