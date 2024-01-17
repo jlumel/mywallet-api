@@ -59,6 +59,12 @@ const accountsController = {
                         },
                     },
                 },
+                {
+                    $project: {
+                        _id: 1,
+                        total: { $round: ['$total', 2] }
+                    }
+                }
             ])
 
             const totalsByCurrency = await Transactions.aggregate([
@@ -79,6 +85,12 @@ const accountsController = {
                         },
                     },
                 },
+                {
+                    $project: {
+                        _id: 1,
+                        total: { $round: ['$total', 2] }
+                    }
+                }
             ])
 
             res.json({ totals, totalsByCurrency })
