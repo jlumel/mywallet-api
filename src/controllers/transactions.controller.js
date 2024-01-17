@@ -126,9 +126,7 @@ const transactionsController = {
             const transaction = {}
 
             for (const key in req.body) {
-                if (req.body[key]) {
-                    transaction[key] = req.body[key]
-                }
+                transaction[key] = req.body[key]
             }
 
             await Transactions.findOneAndUpdate({ _id: id },
@@ -136,8 +134,6 @@ const transactionsController = {
                     $set: { ...transaction }
                 }
             )
-
-
 
             res.json({ message: "Transaction updated successfully" })
 
