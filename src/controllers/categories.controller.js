@@ -81,7 +81,7 @@ const categoriesController = {
 
                 await Subcategories.updateMany({ userId: req.session.user._id, categoryName: oldCategory.name }, { categoryName: req.body.name })
 
-                res.json({ message: "Subcategory updated successfully" })
+                res.json({ message: "Category updated successfully" })
             }
 
         } catch (err) {
