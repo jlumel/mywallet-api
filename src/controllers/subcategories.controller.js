@@ -9,7 +9,7 @@ const subcategoriesController = {
         const userId = req.session.user._id
 
         try {
-            const subcategories = await Subcategories.find({ userId }).exec()
+            const subcategories = await Subcategories.find({ userId })
             res.json(subcategories)
         } catch (err) {
             errorLog.error(err)
@@ -23,7 +23,7 @@ const subcategoriesController = {
         const { id } = req.params
 
         try {
-            const subcategory = await Subcategories.find({ userId, _id: id }).exec()
+            const subcategory = await Subcategories.find({ userId, _id: id })
             res.json(subcategory)
         } catch (err) {
             errorLog.error(err)

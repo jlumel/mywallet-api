@@ -8,7 +8,7 @@ const currenciesController = {
     getCurrencies: async (req, res) => {
 
         try {
-            const currencies = await Currencies.find({}).exec()
+            const currencies = await Currencies.find({})
             res.json(currencies)
         } catch (err) {
             errorLog.error(err)
@@ -22,7 +22,7 @@ const currenciesController = {
         const { id } = req.params
 
         try {
-            const currencies = await Currencies.findById(id).exec()
+            const currencies = await Currencies.findById(id)
             res.json(currencies)
         } catch (err) {
             errorLog.error(err)

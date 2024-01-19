@@ -14,7 +14,7 @@ const userController = {
 
         const { username, password, password2 } = req.body
         try {
-            const user = await Users.findOne({ username: username.toLowerCase() }).exec()
+            const user = await Users.findOne({ username: username.toLowerCase() })
 
             if (user) {
                 res.status(400).json({ message: 'User already exists' })
@@ -47,7 +47,7 @@ const userController = {
 
         let { username, password } = req.body
         try {
-            const user = await Users.findOne({ username: username.toLowerCase() }).exec()
+            const user = await Users.findOne({ username: username.toLowerCase() })
 
             if (!user) {
                 res.status(400).json({ message: 'User does not exist' })

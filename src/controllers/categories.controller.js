@@ -10,7 +10,7 @@ const categoriesController = {
         const userId = req.session.user._id
 
         try {
-            const categories = await Categories.find({ userId }).exec()
+            const categories = await Categories.find({ userId })
             res.json(categories)
         } catch (err) {
             errorLog.error(err)
@@ -24,7 +24,7 @@ const categoriesController = {
         const { id } = req.params
 
         try {
-            const category = await Categories.find({ userId, _id: id }).exec()
+            const category = await Categories.find({ userId, _id: id })
             res.json(category)
         } catch (err) {
             errorLog.error(err)
@@ -64,13 +64,13 @@ const categoriesController = {
     modifyCategory: async (req, res) => {
 
         const { id } = req.params
-        const { name } = req.body.name
+        const { name } = req.body
 
         try {
 
             if (name) {
                 const category = { name }
-                const oldCategory = await Categories.findeOne({ _id: id })
+                const oldCategory = await Categories.findById(id)
                 await Categories.findOneAndUpdate({ _id: id },
                     {
                         $set: { ...category }

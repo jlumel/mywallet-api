@@ -27,7 +27,7 @@ const accountsController = {
         const { id } = req.params
 
         try {
-            const account = await Accounts.find({ userId, _id: id }).exec()
+            const account = await Accounts.find({ userId, _id: id })
             res.json(account)
         } catch (err) {
             errorLog.error(err)

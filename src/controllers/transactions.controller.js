@@ -39,7 +39,7 @@ const transactionsController = {
                 query.type = req.query.type
             }
 
-            const transactions = await Transactions.find(query).exec()
+            const transactions = await Transactions.find(query)
             res.json(transactions)
 
         } catch (err) {
@@ -57,7 +57,7 @@ const transactionsController = {
         console.log(userId, id)
 
         try {
-            const transactions = await Transactions.find({ userId, _id: id }).exec()
+            const transactions = await Transactions.find({ userId, _id: id })
             res.json(transactions)
         } catch (err) {
             errorLog.error(err)
