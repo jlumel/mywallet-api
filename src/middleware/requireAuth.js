@@ -8,7 +8,7 @@ const requireAuth = (req, res, next) => {
 
         const jwToken = token.split(' ')[1]
 
-        jwt.verify(jwToken, process.env.SECRET_KEY, (err, value) => {
+        jwt.verify(jwToken, process.env.SECRET_KEY, (err) => {
             if (err) {
                 res.status(403).send({
                     message: 'Invalid token'
