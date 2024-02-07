@@ -86,7 +86,7 @@ const userController = {
 
         const token = req.headers.authorization
 
-        if (req.session.user && req.session.user.username && token) {
+        if (req.session.user?.username && token) {
             res.json({ isLogged: true, username: req.session.user.username })
         } else {
             const jwtToken = token.split(' ')[1]
