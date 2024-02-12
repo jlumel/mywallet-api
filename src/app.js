@@ -17,6 +17,7 @@ const router = express.Router()
 
 //Middlewares
 
+app.disable("x-powered-by")
 process.env.DEV_ENVIRONMENT ? app.use(cors({credentials: true, origin: 'http://localhost:5173'})) :
 app.use(cors({credentials: true, origin: 'https://mywallet.lumel.dev'}))
 app.use(compression())
