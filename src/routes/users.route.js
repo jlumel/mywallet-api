@@ -1,30 +1,19 @@
 import usersController from '../controllers/users.controller.js'
+import requireAuth from '../middleware/requireAuth.js'
 
+const Users = router => {
 
-const Users = (app, router) => {
+    router.post('/user/register', usersController.registerUser)
 
-    app.post('/user/register', (req, res) => {
-        usersController.registerUser(req, res)
-    })
+    router.post('/user/login', usersController.loginUser)
 
-    app.post('/user/login', (req, res) => {
-        usersController.loginUser(req, res)
-    })
+    router.post('/user/logout', requireAuth, usersController.logoutUser)
 
-    router.post('/user/logout', (req, res) => {
-        usersController.logoutUser(req, res)
-    })
+    router.get('/user', requireAuth, usersController.getSessionInfo)
 
-    router.get('/user', (req, res) => {
-        usersController.getSessionInfo(req, res)
-    })
+    router.put('/user/password', requireAuth, usersController.changePassword)
 
-    router.put('/user/password', (req, res) => {
-        usersController.changePassword(req, res)
-    })
-    router.post('/user/firstLogin', (req, res)=> {
-        usersController.firstLogin(req, res)
-    })
+    router.post('/user/firstLogin', requireAuth, usersController.firstLogin)
 }
 
 export default Users

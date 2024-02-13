@@ -1,21 +1,17 @@
 import categoriesController from '../controllers/categories.controller.js'
+import requireAuth from '../middleware/requireAuth.js'
 
 const Categories = router => {
-    router.get('/categories', (req, res) => {
-        categoriesController.getCategories(req, res)
-    })
-    router.get('/categories/:id', (req, res) => {
-        categoriesController.getCategoryById(req, res)
-    })
-    router.post('/categories', (req, res) => {
-        categoriesController.createCategory(req, res)
-    })
-    router.put('/categories/:id', (req, res) => {
-        categoriesController.modifyCategory(req, res)
-    })
-    router.delete('/categories/:id', (req, res) => {
-        categoriesController.deleteCategory(req, res)
-    })
+
+    router.get('/categories', requireAuth, categoriesController.getCategories)
+
+    router.get('/categories/:id', requireAuth, categoriesController.getCategoryById)
+
+    router.post('/categories', requireAuth, categoriesController.createCategory)
+
+    router.put('/categories/:id', requireAuth, categoriesController.modifyCategory)
+
+    router.delete('/categories/:id', requireAuth, categoriesController.deleteCategory)
 }
 
 export default Categories

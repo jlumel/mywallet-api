@@ -1,24 +1,19 @@
 import accountsController from '../controllers/accounts.controller.js'
+import requireAuth from '../middleware/requireAuth.js'
 
 const Accounts = router => {
-    router.get('/accounts', (req, res) => {
-        accountsController.getAccounts(req, res)
-    })
-    router.get('/accounts/:id', (req, res) => {
-        accountsController.getAccountById(req, res)
-    })
-    router.post('/accounts/totals', (req, res) => {
-        accountsController.getTotals(req, res)
-    }) 
-    router.post('/accounts', (req, res) => {
-        accountsController.createAccount(req, res)
-    })
-    router.put('/accounts/:id', (req, res) => {
-        accountsController.modifyAccount(req, res)
-    })
-    router.delete('/accounts/:id', (req, res) => {
-        accountsController.deleteAccount(req, res)
-    })
+
+    router.get('/accounts', requireAuth, accountsController.getAccounts)
+
+    router.get('/accounts/:id', requireAuth, accountsController.getAccountById)
+
+    router.post('/accounts/totals', requireAuth, accountsController.getTotals)
+
+    router.post('/accounts', requireAuth, accountsController.createAccount)
+
+    router.put('/accounts/:id', requireAuth, accountsController.modifyAccount)
+
+    router.delete('/accounts/:id', requireAuth, accountsController.deleteAccount)
 }
 
 export default Accounts

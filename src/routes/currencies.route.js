@@ -1,21 +1,17 @@
 import currenciesController from '../controllers/currencies.controller.js'
+import requireAuth from '../middleware/requireAuth.js'
 
 const Currencies = router => {
-    router.get('/currencies', (req, res) => {
-        currenciesController.getCurrencies(req, res)
-    })
-    router.get('/currencies/:id', (req, res) => {
-        currenciesController.getCurrencyById(req, res)
-    })
-    router.post('/currencies', (req, res) => {
-        currenciesController.createCurrency(req, res)
-    })
-    router.put('/currencies/:id', (req, res) => {
-        currenciesController.modifyCurrency(req, res)
-    })
-    router.delete('/currencies/:id', (req, res) => {
-        currenciesController.deleteCurrency(req, res)
-    })
+
+    router.get('/currencies', requireAuth, currenciesController.getCurrencies)
+
+    router.get('/currencies/:id', requireAuth, currenciesController.getCurrencyById)
+
+    router.post('/currencies', requireAuth, currenciesController.createCurrency)
+
+    router.put('/currencies/:id', requireAuth, currenciesController.modifyCurrency)
+
+    router.delete('/currencies/:id', requireAuth, currenciesController.deleteCurrency)
 }
 
 export default Currencies

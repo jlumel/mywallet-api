@@ -1,21 +1,17 @@
 import transactionsController from '../controllers/transactions.controller.js'
+import requireAuth from '../middleware/requireAuth.js'
 
 const Transactions = router => {
-    router.get('/transactions', (req, res) => {
-        transactionsController.getTransactions(req, res)
-    })
-    router.get('/transactions/:id', (req, res) => {
-        transactionsController.getTransactionById(req, res)
-    })
-    router.post('/transactions', (req, res) => {
-        transactionsController.createTransaction(req, res)
-    })
-    router.put('/transactions/:id', (req, res) => {
-        transactionsController.modifyTransaction(req, res)
-    })
-    router.delete('/transactions/:id', (req, res) => {
-        transactionsController.deleteTransaction(req, res)
-    })
+
+    router.get('/transactions', requireAuth, transactionsController.getTransactions)
+
+    router.get('/transactions/:id', requireAuth, transactionsController.getTransactionById)
+
+    router.post('/transactions', requireAuth, transactionsController.createTransaction)
+
+    router.put('/transactions/:id',  requireAuth, transactionsController.modifyTransaction)
+
+    router.delete('/transactions/:id', requireAuth, transactionsController.deleteTransaction)
 }
 
 export default Transactions
