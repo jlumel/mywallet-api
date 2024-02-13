@@ -35,7 +35,3 @@ Accounts(router)
 Currencies(router)
 Categories(router)
 Subcategories(router)
-
-app.get("*", (req, res) => {
-    res.render('index.html')
-})
