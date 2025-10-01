@@ -117,8 +117,6 @@ const transactionsController = {
     },
     modifyTransaction: async (req, res) => {
 
-        // modify a given transaction information: get transaction id and information to modify
-
         const { id } = req.params
 
         try {
@@ -126,7 +124,12 @@ const transactionsController = {
             const transaction = {}
 
             for (const key in req.body) {
-                transaction[key] = req.body[key]
+
+                if (key === 'timestamp') {
+                    transaction[key] = new Date(req.body[key]).getTime()
+                } else {
+                    transaction[key] = req.body[key]
+                }
             }
 
             await Transactions.findOneAndUpdate({ _id: id },
