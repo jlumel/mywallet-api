@@ -7,7 +7,7 @@ const categoriesController = {
 
     getCategories: async (req, res) => {
 
-        const userId = req.session.user._id
+        const userId = req.user._id
 
         try {
             const categories = await Categories.find({ userId })
@@ -20,7 +20,7 @@ const categoriesController = {
     },
     getCategoryById: async (req, res) => {
 
-        req.session.user._id
+        const userId = req.user._id
         const { id } = req.params
 
         try {
@@ -34,7 +34,7 @@ const categoriesController = {
     },
     createCategory: (req, res) => {
 
-        const userId = req.session.user._id
+        const userId = req.user._id
 
         const { name } = req.body
 
@@ -77,9 +77,8 @@ const categoriesController = {
                     }
                 )
 
-                await Transactions.updateMany({ userId: req.session.user._id, categoryName: oldCategory.name }, { categoryName: req.body.name })
-
-                await Subcategories.updateMany({ userId: req.session.user._id, categoryName: oldCategory.name }, { categoryName: req.body.name })
+                await Transactions.updateMany({ userId: req.user._id, categoryName: oldCategory.name }, { categoryName: req.body.name })
+                await Subcategories.updateMany({ userId: req.user._id, categoryName: oldCategory.name }, { categoryName: req.body.name })
 
                 res.json({ message: "Category updated successfully" })
             }

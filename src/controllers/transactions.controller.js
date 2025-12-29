@@ -8,7 +8,7 @@ const transactionsController = {
 
         // get all transactions from the user. Apply filters if queries are provided (Amount, type, min amount, max amount, category, subcategory, account, currency)
 
-        const userId = req.session.user._id
+        const userId = req.user._id
 
         try {
             const query = { userId }
@@ -52,7 +52,7 @@ const transactionsController = {
 
         // get one transaction by id
 
-        const userId = req.session.user._id
+        const userId = req.user._id
         const { id } = req.params
         console.log(userId, id)
 
@@ -68,7 +68,7 @@ const transactionsController = {
 
         // create a transaction based on model
 
-        const userId = req.session.user._id
+        const userId = req.user._id
 
         const { type, currencyAcronym, amount, accountName, categoryName, subcategoryName, description } = req.body
 

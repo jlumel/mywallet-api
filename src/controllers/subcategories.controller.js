@@ -6,7 +6,7 @@ const subcategoriesController = {
 
     getSubcategories: async (req, res) => {
 
-        const userId = req.session.user._id
+        const userId = req.user._id
 
         try {
             const subcategories = await Subcategories.find({ userId })
@@ -19,7 +19,7 @@ const subcategoriesController = {
     },
     getSubcategoryById: async (req, res) => {
 
-        const userId = req.session.user._id
+        const userId = req.user._id
         const { id } = req.params
 
         try {
@@ -34,7 +34,7 @@ const subcategoriesController = {
     },
     createSubcategory: (req, res) => {
 
-        const userId = req.session.user._id
+        const userId = req.user._id
 
         const { name, categoryName } = req.body
 

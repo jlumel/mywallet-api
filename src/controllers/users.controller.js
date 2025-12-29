@@ -48,6 +48,7 @@ const userController = {
         let { username, password } = req.body
         try {
             const user = await Users.findOne({ username: username.toLowerCase() })
+                .lean()
 
             if (!user) {
                 res.status(400).json({ message: 'User does not exist' })
@@ -56,7 +57,6 @@ const userController = {
                     res.status(403).json({ message: 'Invalid password' })
                 } else {
                     const token = jwt.sign({ password: createHash(password), ...user }, process.env.SECRET_KEY, { expiresIn: '4h' })
-                    req.session.user = user
                     process.env.DEV_ENVIRONMENT && logger.info("Signed in")
                     res.json({ isLogged: true, username: username.toLowerCase(), token })
                 }
@@ -68,35 +68,31 @@ const userController = {
         }
     },
     logoutUser: (req, res) => {
-
-        // Log out and end session
-
-        req.session.destroy(function (err) {
-            if (err) {
-                errorLog.error(err)
-                res.status(500).json({ error: "Internal server error" })
-            } else {
-                res.json({ message: "Logged out successfully" })
-            }
-        })
+        // Log out (stateless, so just return success)
         process.env.DEV_ENVIRONMENT && logger.info("Logged out")
+        res.json({ message: "Logged out successfully" })
 
     },
     getSessionInfo: (req, res) => {
 
         const token = req.headers.authorization
 
-        if (req.session.user?.username && token) {
-            res.json({ isLogged: true, username: req.session.user.username })
+        if (token) {
+            const jwToken = token.split(' ')[1]
+            jwt.verify(jwToken, process.env.SECRET_KEY, (err, decoded) => {
+                if (err) {
+                    res.json({ isLogged: false, username: "", token: "" })
+                } else {
+                    res.json({ isLogged: true, username: decoded.username })
+                }
+            })
         } else {
-            const jwtToken = token.split(' ')[1]
-
-            res.json({ isLogged: false, username: "", token: jwtToken })
+            res.json({ isLogged: false, username: "", token: "" })
         }
     },
     changePassword: async (req, res) => {
 
-        const userId = req.session.user._id
+        const userId = req.user._id
 
         const newPassword = req.body.newPassword
 
@@ -112,7 +108,7 @@ const userController = {
         }
     },
     firstLogin: async (req, res) => {
-        const userId = req.session.user._id
+        const userId = req.user._id
 
         const { currencyAcronym } = req.body
 
