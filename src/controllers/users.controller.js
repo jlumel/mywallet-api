@@ -22,7 +22,7 @@ const userController = {
                 if (password !== password2) {
                     return res.status(400).json({ message: 'Passwords do not match' })
                 }
-                const hash = createHash(password)
+                const hash = await createHash(password)
                 const newUser = new Users({ username: username.toLowerCase(), password: hash })
 
                 newUser.save()
@@ -53,10 +53,10 @@ const userController = {
             if (!user) {
                 res.status(400).json({ message: 'User does not exist' })
             } else {
-                if (!validatePassword(user.password, password)) {
+                if (!await validatePassword(user.password, password)) {
                     res.status(403).json({ message: 'Invalid password' })
                 } else {
-                    const token = jwt.sign({ password: createHash(password), ...user }, process.env.SECRET_KEY, { expiresIn: '4h' })
+                    const token = jwt.sign({ password: await createHash(password), ...user }, process.env.SECRET_KEY, { expiresIn: '4h' })
                     process.env.DEV_ENVIRONMENT && logger.info("Signed in")
                     res.json({ isLogged: true, username: username.toLowerCase(), token })
                 }
@@ -98,7 +98,7 @@ const userController = {
 
         try {
 
-            await Users.findOneAndUpdate({ _id: userId }, { password: createHash(newPassword) })
+            await Users.findOneAndUpdate({ _id: userId }, { password: await createHash(newPassword) })
 
             res.json({ message: "Password updated successfully" })
 
